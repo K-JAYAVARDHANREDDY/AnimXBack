@@ -1,20 +1,31 @@
 /**
  * Server-only utility.
- * Fetches data from Azure Cosmos DB.
+ * Fetches data from local JSON files.
  * Should only be imported inside Route Handlers (app/api/...) or Server Components.
  */
 
-import { getContainer } from './cosmosClient';
+import fs from 'fs/promises';
+import path from 'path';
 import type { AnimationDTO, AnimationSummaryDTO } from '@/types/animation.types';
+
+const dataDirectory = path.join(process.cwd(), 'data/animations');
 
 /** Return all animations. Results are sorted by name. */
 export async function getAllAnimations(): Promise<AnimationDTO[]> {
   try {
-    const container = await getContainer();
-    const { resources } = await container.items.query<AnimationDTO>("SELECT * from c").fetchAll();
-    return resources.sort((a, b) => a.name.localeCompare(b.name));
+    const filenames = await fs.readdir(dataDirectory);
+    const animations: AnimationDTO[] = [];
+    
+    for (const filename of filenames) {
+      if (!filename.endsWith('.json')) continue;
+      const filePath = path.join(dataDirectory, filename);
+      const fileContents = await fs.readFile(filePath, 'utf8');
+      animations.push(JSON.parse(fileContents));
+    }
+    
+    return animations.sort((a, b) => a.name.localeCompare(b.name));
   } catch (err) {
-    console.error("Failed to fetch all animations from Cosmos DB", err);
+    console.error("Failed to read animations from disk", err);
     return [];
   }
 }
@@ -22,14 +33,19 @@ export async function getAllAnimations(): Promise<AnimationDTO[]> {
 /** Return slim summaries for the list API (strips code / controls / animxSyntax). */
 export async function getAnimationSummaries(): Promise<AnimationSummaryDTO[]> {
   try {
-    const container = await getContainer();
-    const querySpec = {
-      query: "SELECT c.id, c.name, c.description, c.category, c.engine, c.difficulty, c.tags, c.defaultProps from c"
-    };
-    const { resources } = await container.items.query<AnimationSummaryDTO>(querySpec).fetchAll();
-    return resources.sort((a, b) => a.name.localeCompare(b.name));
+    const animations = await getAllAnimations();
+    return animations.map(a => ({
+      id: a.id,
+      name: a.name,
+      description: a.description,
+      category: a.category,
+      engine: a.engine,
+      difficulty: a.difficulty,
+      tags: a.tags,
+      defaultProps: a.defaultProps
+    }));
   } catch (err) {
-    console.error("Failed to fetch animation summaries from Cosmos DB", err);
+    console.error("Failed to generate animation summaries", err);
     return [];
   }
 }
@@ -37,13 +53,12 @@ export async function getAnimationSummaries(): Promise<AnimationSummaryDTO[]> {
 /** Return a single animation by ID, or null if not found. */
 export async function getAnimationById(id: string): Promise<AnimationDTO | null> {
   try {
-    const container = await getContainer();
-    // Assuming partition key is '/id'
-    const { resource } = await container.item(id, id).read<AnimationDTO>();
-    return resource || null;
+    const filePath = path.join(dataDirectory, `${id}.json`);
+    const fileContents = await fs.readFile(filePath, 'utf8');
+    return JSON.parse(fileContents);
   } catch (err: any) {
-    if (err.code === 404) return null;
-    console.error(`Failed to fetch animation by id (${id}) from Cosmos DB`, err);
+    if (err.code === 'ENOENT') return null;
+    console.error(`Failed to read animation by id (${id})`, err);
     return null;
   }
 }

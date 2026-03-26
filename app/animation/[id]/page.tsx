@@ -20,10 +20,17 @@ export default function AnimationPage() {
   const [isReady, setIsReady]           = useState(false)
   // Full DTO fetched directly from /api/animations/[id] (has code, controls, animxSyntax)
   const [fullAnimation, setFullAnimation] = useState<AnimationDTO | null>(null)
+  
+  // Timer to delay the appearance of the loading spinner to prevent glitchy flashing
+  const [showLoader, setShowLoader]     = useState(false)
 
   useEffect(() => {
     setIsReady(false)
     setFullAnimation(null)
+    setShowLoader(false)
+
+    // Delay spinner appearance by 150ms
+    const timer = setTimeout(() => setShowLoader(true), 150)
 
     // 1. Fetch full DTO from the API (always returns all fields)
     const fetchFull = fetch(`/api/animations/${id}`)
@@ -35,16 +42,18 @@ export default function AnimationPage() {
     const primary = ANIMATION_IMPORTS[id]
     const loadComponent = primary ? primary().catch(() => {}) : Promise.resolve()
 
-    // 3. Minimum wait time of 2 seconds to prevent glitchy screen flashes
-    const minWait = new Promise(resolve => setTimeout(resolve, 2000))
-
-    // Ready once both the component import, the API fetch, AND minWait complete
-    Promise.all([fetchFull, loadComponent, minWait]).finally(() => setIsReady(true))
+    // Ready once both the component import and the API fetch complete
+    Promise.all([fetchFull, loadComponent]).finally(() => {
+      setIsReady(true)
+      clearTimeout(timer)
+    })
 
     // 4. Load all others in the background — no await, doesn't block UI
     Object.entries(ANIMATION_IMPORTS).forEach(([key, fn]) => {
       if (key !== id) fn().catch(() => {})
     })
+    
+    return () => clearTimeout(timer)
   }, [id])
 
   // sessionStorage key — must match page.tsx
@@ -78,6 +87,10 @@ const KEY_DASHBOARD = 'animx-dashboard-entered' //Used in sessionStorage to trac
   }, [isReady, fullAnimation, router])
 
   if (!isReady || !fullAnimation) {
+    if (!showLoader) {
+      return <div className="min-h-screen bg-dark-500" />;
+    }
+  
     return (
       <div className="min-h-screen bg-dark-500 flex flex-col items-center justify-center gap-5">
         <motion.div
