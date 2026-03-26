@@ -1,0 +1,31 @@
+{
+  "id": "stagger-pulse",
+  "name": "Stagger Pulse",
+  "category": "Attention",
+  "engine": "tailwind",
+  "difficulty": "easy",
+  "description": "4 real-world UI patterns built with Tailwind CSS animations — a chat app with typing dots, a social feed with skeleton loaders, an analytics dashboard skeleton, and a live service status page with ping indicators.",
+  "tags": ["tailwind", "stagger", "pulse", "bounce", "ping", "skeleton", "loading", "chat", "status", "dashboard"],
+  "defaultProps": {
+    "accentColor": "#0ea5e9",
+    "gridSize": 5,
+    "animationType": "pulse"
+  },
+  "controls": [
+    {
+      "key": "accentColor",
+      "label": "Accent Color",
+      "type": "color",
+      "default": "#0ea5e9"
+    },
+    {
+      "key": "animationType",
+      "label": "Default Tab",
+      "type": "select",
+      "options": ["pulse", "bounce", "ping", "spin"],
+      "default": "pulse"
+    }
+  ],
+  "code": "// 1. Typing indicator — animate-bounce with stagger\n<div className=\"flex items-center gap-1.5 px-4 py-3 bg-white/5 rounded-2xl\">\n  {[0, 1, 2].map(i => (\n    <div\n      key={i}\n      className=\"w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce\"\n      style={{ animationDelay: `${i * 150}ms` }}\n    />\n  ))}\n</div>\n\n// 2. Skeleton loader — animate-pulse\n<div className=\"flex gap-3 p-4\">\n  <div className=\"w-9 h-9 rounded-full bg-white/10 animate-pulse\" />\n  <div className=\"flex-1 space-y-2\">\n    <div className=\"h-2.5 bg-white/10 rounded-full animate-pulse\" style={{ width: '30%', animationDelay: '100ms' }} />\n    <div className=\"h-2 bg-white/10 rounded-full animate-pulse\" style={{ animationDelay: '150ms' }} />\n  </div>\n</div>\n\n// 3. Live ping indicator — animate-ping\n<div className=\"relative inline-flex\">\n  <span className=\"w-2.5 h-2.5 rounded-full bg-green-400\" />\n  <span className=\"absolute inset-0 w-2.5 h-2.5 rounded-full bg-green-400 animate-ping opacity-60\" />\n</div>\n\n// 4. Notification badge ping\n<div className=\"relative\">\n  <span className=\"absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 animate-ping opacity-75\" />\n  <span className=\"absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] flex items-center justify-center\">3</span>\n</div>",
+  "animxSyntax": "// Typing dots\nanimax.typingDots({ target: '.chat-indicator', stagger: 150 })\n\n// Skeleton loader\nanimax.skeleton({ target: '.feed-card', lines: 3 })\n\n// Live ping\nanimax.ping({ target: '.status-dot', color: '#22c55e' })\n\n// Notification badge\nanimax.notificationBadge({ target: '.bell', count: 3 })"
+}

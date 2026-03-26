@@ -1,0 +1,41 @@
+{
+  "id": "text-scramble",
+  "name": "Text Scramble",
+  "category": "Text",
+  "engine": "gsap",
+  "difficulty": "medium",
+  "description": "Letters randomize through characters before resolving into the final word. Triggered on hover or auto-plays on loop.",
+  "tags": ["text", "scramble", "glitch", "hover", "reveal", "gsap"],
+  "defaultProps": {
+    "words": ["ANIMATE", "CREATE", "INSPIRE", "DESIGN", "BUILD"],
+    "speed": 40,
+    "autoPlay": true,
+    "textColor": "#00c3ff",
+    "scrambleChars": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&"
+  },
+  "controls": [
+    {
+      "key": "speed",
+      "label": "Scramble Speed (ms)",
+      "type": "range",
+      "min": 10,
+      "max": 120,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "key": "autoPlay",
+      "label": "Auto Play Loop",
+      "type": "toggle",
+      "default": true
+    },
+    {
+      "key": "textColor",
+      "label": "Text Color",
+      "type": "color",
+      "default": "#00c3ff"
+    }
+  ],
+  "code": "// Text Scramble Effect\nfunction scramble(target: string, speed = 40) {\n  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&'\n  let iteration = 0\n  const interval = setInterval(() => {\n    el.innerText = target\n      .split('')\n      .map((char, i) => {\n        if (i < iteration) return char\n        return chars[Math.floor(Math.random() * chars.length)]\n      })\n      .join('')\n    if (iteration >= target.length) clearInterval(interval)\n    iteration += 1 / 3\n  }, speed)\n}",
+  "animxSyntax": "animx.textScramble({\n  target: '.scramble-text',\n  words: ['ANIMATE', 'CREATE', 'INSPIRE'],\n  speed: 40,\n  autoPlay: true\n})"
+}

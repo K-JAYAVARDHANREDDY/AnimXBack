@@ -1,0 +1,31 @@
+{
+  "id": "neon-glow",
+  "name": "Neon Glow",
+  "category": "Attention",
+  "engine": "css",
+  "difficulty": "easy",
+  "description": "Pure CSS neon glow effects — glowing text, pulsing borders, flickering lights, and neon button hovers. Zero JavaScript required.",
+  "tags": ["css", "neon", "glow", "keyframes", "hover", "pulse"],
+  "defaultProps": {
+    "glowColor": "#00c3ff",
+    "text": "NEON",
+    "flickerSpeed": "2s"
+  },
+  "controls": [
+    {
+      "key": "glowColor",
+      "label": "Glow Color",
+      "type": "color",
+      "default": "#00c3ff"
+    },
+    {
+      "key": "text",
+      "label": "Neon Text",
+      "type": "select",
+      "options": ["NEON", "GLOW", "ANIMX", "LIVE", "OPEN"],
+      "default": "NEON"
+    }
+  ],
+  "code": "/* Pure CSS Neon Glow */\n@keyframes neon-flicker {\n  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {\n    text-shadow:\n      0 0 5px #fff,\n      0 0 10px #fff,\n      0 0 20px var(--glow),\n      0 0 40px var(--glow),\n      0 0 80px var(--glow);\n  }\n  20%, 24%, 55% {\n    text-shadow: none;\n    opacity: 0.8;\n  }\n}\n.neon-text {\n  animation: neon-flicker 2s infinite;\n}",
+  "animxSyntax": "animx.neonGlow({\n  target: '.neon-text',\n  color: '#00c3ff',\n  flicker: true\n})"
+}

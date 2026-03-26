@@ -1,0 +1,40 @@
+{
+  "id": "horizontal-scroll-text",
+  "name": "Horizontal Scroll Text",
+  "category": "Text",
+  "engine": "gsap",
+  "defaultProps": {
+    "text": "EXPERIENCES",
+    "scrubDuration": 2,
+    "bgColor": "#00ffff",
+    "textColor": "#000000"
+  },
+  "controls": [
+    {
+      "key": "scrubDuration",
+      "label": "Scroll Speed",
+      "type": "range",
+      "min": 0.5,
+      "max": 5,
+      "step": 0.5,
+      "default": 2
+    },
+    {
+      "key": "bgColor",
+      "label": "Background",
+      "type": "color",
+      "default": "#00ffff"
+    },
+    {
+      "key": "textColor",
+      "label": "Text Color",
+      "type": "color",
+      "default": "#000000"
+    }
+  ],
+  "code": "gsap.to(textElement, {\n  x: () => -textWidth / 2,\n  ease: 'none',\n  repeat: -1,\n  duration: 20,\n  modifiers: {\n    x: gsap.utils.unitize(x => parseFloat(x) % (textWidth / 2))\n  }\n});",
+  "animxSyntax": "AnimX.marquee('.text').horizontal().elastic().play();",
+  "description": "Horizontally scrolling text inspired by wethinkelastic.com. Click \"Edit Text\" to add your custom content and see it animate live!",
+  "tags": ["text", "horizontal", "scroll", "infinite", "loop", "elastic"],
+  "difficulty": "easy"
+}

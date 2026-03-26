@@ -1,0 +1,15 @@
+{
+  "id": "testimonial-stack-parallax",
+  "name": "Testimonial Stack Parallax",
+  "category": "Scroll",
+  "engine": "gsap",
+  "defaultProps": {
+    "isPreview": false
+  },
+  "controls": [],
+  "code": "gsap.registerPlugin(ScrollTrigger);\n\n// Set negative margin for smooth entrance\ngsap.set('.testimonial-section', {\n  marginTop: '-100vh',\n});\n\n// Parallax text animation\nconst textTl = gsap.timeline({\n  scrollTrigger: {\n    trigger: '.testimonial-section',\n    start: 'top bottom',\n    end: 'bottom top',\n    scrub: 1,\n  },\n});\n\ntextTl\n  .to('.bg-text-1', { xPercent: 60 })\n  .to('.bg-text-2', { xPercent: -30 }, '<')\n  .to('.bg-text-3', { xPercent: 80 }, '<');\n\n// Stack cards animation\nconst cardsTl = gsap.timeline({\n  scrollTrigger: {\n    trigger: '.testimonial-section',\n    start: 'top top',\n    end: '+=200%',\n    scrub: 1,\n    pin: true,\n  },\n});\n\ncardsTl.from('.card', {\n  yPercent: 100,\n  stagger: 0.15,\n  ease: 'power2.out',\n});",
+  "animxSyntax": "AnimX.onScroll('.testimonials')\n  .pin()\n  .stack({ stagger: 0.15 })\n  .parallaxText({ xPercent: [60, -30, 80] })\n  .play();",
+  "description": "SPYLT-inspired stacking video cards with parallax background text. Includes 5 demo videos - upload your own and customize text. Hover to play videos.",
+  "tags": ["testimonial", "cards", "stack", "video", "parallax", "scroll", "spylt", "pin"],
+  "difficulty": "hard"
+}

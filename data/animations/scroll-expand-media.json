@@ -1,0 +1,16 @@
+{
+  "id": "scroll-expand-media",
+  "name": "Scroll Expand Media",
+  "category": "Scroll",
+  "engine": "gsap",
+  "defaultProps": {
+    "mediaUrl": "",
+    "mediaType": "image"
+  },
+  "controls": [],
+  "code": "gsap.registerPlugin(ScrollTrigger);\n\ngsap.fromTo(\n  mediaElement,\n  {\n    scale: 0.5,\n    borderRadius: '20px',\n  },\n  {\n    scale: 1,\n    borderRadius: '0px',\n    scrollTrigger: {\n      trigger: container,\n      start: 'top bottom',\n      end: 'bottom top',\n      scrub: 1,\n    }\n  }\n);",
+  "animxSyntax": "AnimX.onScroll('.media')\n  .expand({ from: 0.5, to: 1 })\n  .play();",
+  "description": "Upload image/video that expands smoothly as you scroll through the page",
+  "tags": ["scroll", "expand", "media", "image", "video"],
+  "difficulty": "medium"
+}
