@@ -1,0 +1,44 @@
+{
+  "id": "paper-fold-scroll",
+  "name": "Paper Fold Scroll",
+  "category": "Scroll",
+  "engine": "gsap",
+  "defaultProps": {
+    "sections": [
+      {
+        "id": 0,
+        "title": "Welcome",
+        "content": "Scroll down to see the paper fold effect",
+        "bgColor": "#1a1a2e",
+        "textColor": "#ffffff"
+      },
+      {
+        "id": 1,
+        "title": "Innovation",
+        "content": "Watch as pages fold like paper",
+        "bgColor": "#16213e",
+        "textColor": "#ffffff"
+      },
+      {
+        "id": 2,
+        "title": "Creativity",
+        "content": "Smooth scroll-triggered animations",
+        "bgColor": "#0f3460",
+        "textColor": "#ffffff"
+      },
+      {
+        "id": 3,
+        "title": "Excellence",
+        "content": "Create your own sections",
+        "bgColor": "#533483",
+        "textColor": "#ffffff"
+      }
+    ]
+  },
+  "controls": [],
+  "code": "gsap.registerPlugin(ScrollTrigger);\n\n// Fold animation\ngsap.to(section, {\n  scrollTrigger: {\n    trigger: section,\n    start: 'top top',\n    end: 'bottom top',\n    scrub: 1,\n  },\n  scale: 0.8,\n  rotateX: -15,\n  rotateY: -15,\n  x: '-40%',\n  y: '-40%',\n  transformOrigin: 'top left',\n  opacity: 0.3,\n  ease: 'none',\n});",
+  "animxSyntax": "AnimX.onScroll('.section')\n  .paperFold({ direction: 'top-left' })\n  .play();",
+  "description": "Pages fold like paper and move to top-left corner as you scroll down, unfold when scrolling up. Fully customizable sections with text, colors, and images.",
+  "tags": ["scroll", "fold", "paper", "3d", "perspective", "origami"],
+  "difficulty": "hard"
+}

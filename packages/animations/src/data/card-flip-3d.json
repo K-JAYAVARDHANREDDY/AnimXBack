@@ -1,0 +1,40 @@
+{
+  "id": "card-flip-3d",
+  "name": "Card Flip 3D",
+  "category": "Hover",
+  "engine": "framer",
+  "difficulty": "medium",
+  "description": "3D card flip animations using Framer Motion. Cards reveal their back face on hover or click with smooth perspective transforms.",
+  "tags": ["3d", "flip", "card", "framer", "hover", "perspective"],
+  "defaultProps": {
+    "flipDirection": "horizontal",
+    "duration": 0.6,
+    "accentColor": "#9b5cf6"
+  },
+  "controls": [
+    {
+      "key": "flipDirection",
+      "label": "Flip Direction",
+      "type": "select",
+      "options": ["horizontal", "vertical"],
+      "default": "horizontal"
+    },
+    {
+      "key": "duration",
+      "label": "Flip Duration (s)",
+      "type": "range",
+      "min": 0.2,
+      "max": 1.2,
+      "step": 0.1,
+      "default": 0.6
+    },
+    {
+      "key": "accentColor",
+      "label": "Accent Color",
+      "type": "color",
+      "default": "#9b5cf6"
+    }
+  ],
+  "code": "// 3D Card Flip with Framer Motion\n<motion.div style={{ rotateY }} className=\"preserve-3d\">\n  {/* Front */}\n  <motion.div className=\"backface-hidden absolute inset-0\" />\n  {/* Back */}\n  <motion.div\n    className=\"backface-hidden absolute inset-0\"\n    style={{ rotateY: 180 }}\n  />\n</motion.div>",
+  "animxSyntax": "animx.cardFlip({\n  target: '.flip-card',\n  direction: 'horizontal',\n  duration: 0.6\n})"
+}

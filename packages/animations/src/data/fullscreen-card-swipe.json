@@ -1,0 +1,43 @@
+{
+  "id": "fullscreen-card-swipe",
+  "name": "Fullscreen Card Swipe",
+  "category": "Scroll",
+  "engine": "framer",
+  "defaultProps": {
+    "initialPages": [
+      {
+        "id": 0,
+        "label": "01",
+        "title": "Where It\nAll Begins",
+        "subtitle": "Every journey starts with a single step into the unknown.",
+        "bg": "#0d0d14",
+        "accent": "#e8ff3c",
+        "textColor": "#f0ede8"
+      },
+      {
+        "id": 1,
+        "label": "02",
+        "title": "Feel the\nRhythm",
+        "subtitle": "Movement is not just physical — it's a state of mind.",
+        "bg": "#f0ede8",
+        "accent": "#1a1aff",
+        "textColor": "#0a0a0f"
+      },
+      {
+        "id": 2,
+        "label": "03",
+        "title": "Layers\nWithin",
+        "subtitle": "Beneath the surface lies a world waiting to be explored.",
+        "bg": "#1a1aff",
+        "accent": "#e8ff3c",
+        "textColor": "#f0ede8"
+      }
+    ]
+  },
+  "controls": [],
+  "code": "const variants = {\n  enter: (direction) => ({\n    y: direction > 0 ? \"100%\" : \"-100%\",\n  }),\n  center: { y: \"0%\" },\n  exit: (direction) => ({\n    y: direction > 0 ? \"-100%\" : \"100%\",\n  }),\n};\n\n<AnimatePresence custom={direction}>\n  <motion.div\n    key={index}\n    custom={direction}\n    variants={variants}\n    initial=\"enter\"\n    animate=\"center\"\n    exit=\"exit\"\n    transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}\n  >\n    {/* Content */}\n  </motion.div>\n</AnimatePresence>",
+  "animxSyntax": "AnimX.fullscreen()\n  .swipe({ direction: 'vertical' })\n  .pages(customPages)\n  .play();",
+  "description": "Fullscreen vertical page transitions with wheel/touch support. Click \"Edit Pages\" to customize content, colors, and add/remove pages.",
+  "tags": ["fullscreen", "swipe", "scroll", "pages", "vertical", "cards", "wheel"],
+  "difficulty": "hard"
+}

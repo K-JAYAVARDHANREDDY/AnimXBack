@@ -1,0 +1,39 @@
+{
+  "id": "counter-animation",
+  "name": "Counter Animation",
+  "category": "Entrance",
+  "engine": "gsap",
+  "difficulty": "easy",
+  "description": "Numbers count up with easing when scrolled into view. Great for stats sections, dashboards, and landing pages.",
+  "tags": ["counter", "number", "stats", "scroll", "entrance", "gsap"],
+  "defaultProps": {
+    "duration": 2.5,
+    "ease": "power2.out",
+    "counters": [
+      { "label": "Animations", "value": 120, "suffix": "+", "prefix": "" },
+      { "label": "Downloads", "value": 48500, "suffix": "K", "prefix": "" },
+      { "label": "Happy Devs", "value": 99, "suffix": "%", "prefix": "" },
+      { "label": "GitHub Stars", "value": 12, "suffix": "K", "prefix": "" }
+    ],
+    "accentColor": "#00c3ff"
+  },
+  "controls": [
+    {
+      "key": "duration",
+      "label": "Count Duration (s)",
+      "type": "range",
+      "min": 0.5,
+      "max": 5,
+      "step": 0.25,
+      "default": 2.5
+    },
+    {
+      "key": "accentColor",
+      "label": "Accent Color",
+      "type": "color",
+      "default": "#00c3ff"
+    }
+  ],
+  "code": "// Counter Animation with GSAP\ngsap.to(counterObj, {\n  value: targetValue,\n  duration: 2.5,\n  ease: 'power2.out',\n  scrollTrigger: {\n    trigger: el,\n    start: 'top 80%',\n    once: true\n  },\n  onUpdate() {\n    el.innerText = Math.round(counterObj.value).toLocaleString()\n  }\n})",
+  "animxSyntax": "animx.counter({\n  target: '.counter',\n  duration: 2.5,\n  ease: 'power2.out',\n  scrollTrigger: true\n})"
+}
