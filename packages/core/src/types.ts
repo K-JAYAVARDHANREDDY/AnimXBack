@@ -17,7 +17,7 @@ export type DifficultyLevel = 'easy' | 'medium' | 'hard';
 export interface ControlDefinition {
   key: string;
   label: string;
-  type: 'range' | 'select' | 'color' | 'toggle';
+  type: 'range' | 'select' | 'color' | 'toggle' | 'text' | 'json';
   min?: number;
   max?: number;
   step?: number;

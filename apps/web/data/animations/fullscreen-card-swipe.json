@@ -34,10 +34,27 @@
       }
     ]
   },
-  "controls": [],
+  "controls": [
+    {
+      "key": "initialPages",
+      "label": "Pages Config",
+      "type": "json",
+      "description": "Array of page objects with: id, label, title, subtitle, bg (color), accent, textColor, image (optional URL), imagePosition (optional), overlayOpacity (0-1, optional)"
+    }
+  ],
   "code": "const variants = {\n  enter: (direction) => ({\n    y: direction > 0 ? \"100%\" : \"-100%\",\n  }),\n  center: { y: \"0%\" },\n  exit: (direction) => ({\n    y: direction > 0 ? \"-100%\" : \"100%\",\n  }),\n};\n\n<AnimatePresence custom={direction}>\n  <motion.div\n    key={index}\n    custom={direction}\n    variants={variants}\n    initial=\"enter\"\n    animate=\"center\"\n    exit=\"exit\"\n    transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}\n  >\n    {/* Content */}\n  </motion.div>\n</AnimatePresence>",
   "animxSyntax": "AnimX.fullscreen()\n  .swipe({ direction: 'vertical' })\n  .pages(customPages)\n  .play();",
-  "description": "Fullscreen vertical page transitions with wheel/touch support. Click \"Edit Pages\" to customize content, colors, and add/remove pages.",
-  "tags": ["fullscreen", "swipe", "scroll", "pages", "vertical", "cards", "wheel"],
+  "description": "Fullscreen vertical page transitions with wheel/touch support. Click \"Edit Pages\" to customize content, colors, background images, and add/remove pages. Supports custom images with overlay opacity for text readability.",
+  "tags": [
+    "fullscreen",
+    "swipe",
+    "scroll",
+    "pages",
+    "vertical",
+    "cards",
+    "wheel",
+    "images",
+    "gallery"
+  ],
   "difficulty": "hard"
 }

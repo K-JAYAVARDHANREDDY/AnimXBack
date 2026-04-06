@@ -9,7 +9,7 @@
   "defaultProps": {
     "glowColor": "#00c3ff",
     "text": "NEON",
-    "flickerSpeed": "2s"
+    "flickerSpeed": "normal"
   },
   "controls": [
     {
@@ -24,6 +24,13 @@
       "type": "select",
       "options": ["NEON", "GLOW", "ANIMX", "LIVE", "OPEN"],
       "default": "NEON"
+    },
+    {
+      "key": "flickerSpeed",
+      "label": "Flicker Speed",
+      "type": "select",
+      "options": ["slow", "normal", "fast"],
+      "default": "normal"
     }
   ],
   "code": "/* Pure CSS Neon Glow */\n@keyframes neon-flicker {\n  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {\n    text-shadow:\n      0 0 5px #fff,\n      0 0 10px #fff,\n      0 0 20px var(--glow),\n      0 0 40px var(--glow),\n      0 0 80px var(--glow);\n  }\n  20%, 24%, 55% {\n    text-shadow: none;\n    opacity: 0.8;\n  }\n}\n.neon-text {\n  animation: neon-flicker 2s infinite;\n}",

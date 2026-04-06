@@ -100,7 +100,57 @@ export function MagneticCursor({
   strength  = animationData.defaultProps.strength,
   radius    = animationData.defaultProps.radius,
   bgColor   = animationData.defaultProps.bgColor,
+  labelText = (animationData.defaultProps as any).labelText || 'Get Started ->',
+  textColor = (animationData.defaultProps as any).textColor || '#ffffff',
   isPreview = false,
+  /** Container background color */
+  containerBgColor = '#0a0a0f',
+  /** Container min height */
+  containerMinHeight = 460,
+  /** Container border radius */
+  containerBorderRadius = 12,
+  /** Headline text */
+  headline = 'We craft digital',
+  /** Headline accent text */
+  headlineAccent = 'experiences',
+  /** Subtitle text */
+  subtitle = 'Award-winning studio for brand identity, web & motion.',
+  /** Primary CTA text */
+  ctaText = 'View our work →',
+  /** Secondary CTA text */
+  secondaryCtaText = 'Watch showreel',
+  /** Logo text (used if logoImage not provided) */
+  logoText = 'S',
+  /** Logo image URL */
+  logoImage,
+  /** Brand name */
+  brandName = 'Studio',
+  /** Nav items */
+  navItems = ['Work', 'Services', 'About'],
+  /** Stats data */
+  stats = [{ label: 'Projects', value: '120+' }, { label: 'Clients', value: '48' }, { label: 'Awards', value: '12' }],
+  /** Social icons */
+  socialIcons = ['𝕏', 'in', '⬡', '◎'],
+  /** Badge text */
+  badgeText = 'Available for projects',
+  /** Show navbar */
+  showNavbar = true,
+  /** Show stats */
+  showStats = true,
+  /** Show social icons */
+  showSocialIcons = true,
+  /** Show badge */
+  showBadge = true,
+  /** Headline font size */
+  headlineFontSize = '1.875rem',
+  /** Gradient secondary color */
+  gradientSecondary = '#9b5cf6',
+  /** Navbar contact button text */
+  navCtaText = "Let's talk",
+  /** Background image URL */
+  backgroundImage,
+  /** Background image opacity (0-1) */
+  backgroundImageOpacity = 0.3,
 }: {
   strength?:  number
   radius?:    number
@@ -108,12 +158,36 @@ export function MagneticCursor({
   isPreview?: boolean
   labelText?: string
   textColor?: string
+  containerBgColor?: string
+  containerMinHeight?: number
+  containerBorderRadius?: number
+  headline?: string
+  headlineAccent?: string
+  subtitle?: string
+  ctaText?: string
+  secondaryCtaText?: string
+  logoText?: string
+  logoImage?: string
+  brandName?: string
+  navItems?: string[]
+  stats?: Array<{ label: string; value: string }>
+  socialIcons?: string[]
+  badgeText?: string
+  showNavbar?: boolean
+  showStats?: boolean
+  showSocialIcons?: boolean
+  showBadge?: boolean
+  headlineFontSize?: string
+  gradientSecondary?: string
+  navCtaText?: string
+  backgroundImage?: string
+  backgroundImageOpacity?: number
 }) {
   const [isMounted, setIsMounted] = useState(false)
   useEffect(() => { setIsMounted(true) }, [])
 
   if (!isMounted) return (
-    <div className="w-full h-full bg-[#0a0a0f] flex items-center justify-center">
+    <div className="w-full h-full flex items-center justify-center" style={{ background: containerBgColor }}>
       <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
     </div>
   )
@@ -122,67 +196,91 @@ export function MagneticCursor({
   if (isPreview) return <PreviewStatic bgColor={bgColor} />
 
   // ── FULL DETAIL PAGE ──────────────────────────────────────────────
-  // Compact single-screen layout — no overflow, everything fits in the
-  // live preview box without needing to scroll.
   return (
     <div
-      className="w-full rounded-xl overflow-hidden bg-[#0a0a0f] flex flex-col"
-      style={{ minHeight: 460 }}
+      className="w-full overflow-hidden flex flex-col relative"
+      style={{ minHeight: containerMinHeight, background: containerBgColor, borderRadius: containerBorderRadius }}
     >
+      {/* Background image overlay */}
+      {backgroundImage && (
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ 
+            backgroundImage: `url(${backgroundImage})`, 
+            opacity: backgroundImageOpacity,
+            borderRadius: containerBorderRadius 
+          }}
+        />
+      )}
+      
+      {/* Content wrapper */}
+      <div className="relative z-10 flex flex-col flex-1">
       {/* ── Navbar ── */}
-      <nav className="flex items-center justify-between px-6 py-4 border-b border-white/5 flex-shrink-0">
-        <Magnetic strength={0.3} radius={80}>
-          <div className="flex items-center gap-2 cursor-pointer">
-            <div
-              className="w-6 h-6 rounded-lg flex items-center justify-center font-black text-white text-[10px]"
-              style={{ background: `linear-gradient(135deg, ${bgColor}, #9b5cf6)` }}
-            >S</div>
-            <span className="text-white font-bold text-sm tracking-tight">Studio</span>
+      {showNavbar && (
+        <nav className="flex items-center justify-between px-6 py-4 border-b border-white/5 flex-shrink-0">
+          <Magnetic strength={0.3} radius={80}>
+            <div className="flex items-center gap-2 cursor-pointer">
+              {logoImage ? (
+                <img 
+                  src={logoImage} 
+                  alt={brandName} 
+                  className="w-6 h-6 rounded-lg object-contain"
+                />
+              ) : (
+                <div
+                  className="w-6 h-6 rounded-lg flex items-center justify-center font-black text-white text-[10px]"
+                  style={{ background: `linear-gradient(135deg, ${bgColor}, ${gradientSecondary})` }}
+                >{logoText}</div>
+              )}
+              <span className="text-white font-bold text-sm tracking-tight">{brandName}</span>
+            </div>
+          </Magnetic>
+
+          <div className="flex items-center gap-5">
+            {navItems.map(item => (
+              <Magnetic key={item} strength={0.5} radius={60}>
+                <span className="text-gray-400 hover:text-white text-xs font-medium transition-colors cursor-pointer">
+                  {item}
+                </span>
+              </Magnetic>
+            ))}
           </div>
-        </Magnetic>
 
-        <div className="flex items-center gap-5">
-          {['Work', 'Services', 'About'].map(item => (
-            <Magnetic key={item} strength={0.5} radius={60}>
-              <span className="text-gray-400 hover:text-white text-xs font-medium transition-colors cursor-pointer">
-                {item}
-              </span>
-            </Magnetic>
-          ))}
-        </div>
-
-        <Magnetic strength={0.4} radius={80}>
-          <button
-            className="px-3 py-1.5 rounded-full text-[10px] font-semibold border transition-colors cursor-pointer"
-            style={{ borderColor: `${bgColor}66`, color: bgColor }}
-          >
-            Let's talk
-          </button>
-        </Magnetic>
-      </nav>
+          <Magnetic strength={0.4} radius={80}>
+            <button
+              className="px-3 py-1.5 rounded-full text-[10px] font-semibold border transition-colors cursor-pointer"
+              style={{ borderColor: `${bgColor}66`, color: bgColor }}
+            >
+              {navCtaText}
+            </button>
+          </Magnetic>
+        </nav>
+      )}
 
       {/* ── Hero — takes remaining space ── */}
       <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-8 gap-5">
 
         {/* Badge */}
-        <Magnetic strength={0.3} radius={90}>
-          <div
-            className="flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-medium cursor-default"
-            style={{ borderColor: `${bgColor}40`, color: bgColor, backgroundColor: `${bgColor}10` }}
-          >
-            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: bgColor }} />
-            Available for projects
-          </div>
-        </Magnetic>
+        {showBadge && (
+          <Magnetic strength={0.3} radius={90}>
+            <div
+              className="flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-medium cursor-default"
+              style={{ borderColor: `${bgColor}40`, color: bgColor, backgroundColor: `${bgColor}10` }}
+            >
+              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: bgColor }} />
+              {badgeText}
+            </div>
+          </Magnetic>
+        )}
 
         {/* Headline */}
         <div className="space-y-1">
-          <h1 className="text-3xl font-black text-white leading-tight tracking-tight">
-            We craft digital<br />
-            <span style={{ color: bgColor }}>experiences</span>
+          <h1 className="font-black text-white leading-tight tracking-tight" style={{ fontSize: headlineFontSize }}>
+            {headline}<br />
+            <span style={{ color: bgColor }}>{headlineAccent}</span>
           </h1>
           <p className="text-gray-500 text-xs leading-relaxed max-w-xs mx-auto">
-            Award-winning studio for brand identity, web & motion.
+            {subtitle}
           </p>
         </div>
 
@@ -192,51 +290,58 @@ export function MagneticCursor({
             <button
               className="px-6 py-2.5 rounded-full text-xs font-bold text-white cursor-pointer"
               style={{
-                background: `linear-gradient(135deg, ${bgColor}, #9b5cf6)`,
+                color: textColor,
+
+                background: `linear-gradient(135deg, ${bgColor}, ${gradientSecondary})`,
                 boxShadow: `0 6px 24px ${bgColor}40`,
               }}
             >
-              View our work →
+              {labelText || ctaText}
             </button>
           </Magnetic>
 
           <Magnetic strength={strength * 0.7} radius={radius * 0.85}>
             <button className="px-6 py-2.5 rounded-full text-xs font-semibold text-gray-300 border border-white/10 hover:border-white/20 transition-colors cursor-pointer">
-              Watch showreel
+              {secondaryCtaText}
             </button>
           </Magnetic>
         </div>
 
         {/* Stats */}
-        <div className="flex items-center gap-5 mt-1">
-          {[{ label: 'Projects', value: '120+' }, { label: 'Clients', value: '48' }, { label: 'Awards', value: '12' }].map((stat, i) => (
-            <div key={i} className="flex items-center gap-5">
-              {i > 0 && <div className="w-px h-5 bg-white/10" />}
-              <Magnetic strength={0.3} radius={50}>
-                <div className="text-center cursor-default">
-                  <div className="text-white font-black text-base">{stat.value}</div>
-                  <div className="text-gray-600 text-[9px] uppercase tracking-wider">{stat.label}</div>
-                </div>
-              </Magnetic>
-            </div>
-          ))}
-        </div>
+        {showStats && (
+          <div className="flex items-center gap-5 mt-1">
+            {stats.map((stat, i) => (
+              <div key={i} className="flex items-center gap-5">
+                {i > 0 && <div className="w-px h-5 bg-white/10" />}
+                <Magnetic strength={0.3} radius={50}>
+                  <div className="text-center cursor-default">
+                    <div className="text-white font-black text-base">{stat.value}</div>
+                    <div className="text-gray-600 text-[9px] uppercase tracking-wider">{stat.label}</div>
+                  </div>
+                </Magnetic>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Social icons */}
-        <div className="flex items-center gap-3">
-          {['𝕏', 'in', '⬡', '◎'].map((icon, i) => (
-            <Magnetic key={i} strength={0.6} radius={50}>
-              <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/30 transition-colors cursor-pointer text-xs">
-                {icon}
-              </div>
-            </Magnetic>
-          ))}
-        </div>
+        {showSocialIcons && (
+          <div className="flex items-center gap-3">
+            {socialIcons.map((icon, i) => (
+              <Magnetic key={i} strength={0.6} radius={50}>
+                <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/30 transition-colors cursor-pointer text-xs">
+                  {icon}
+                </div>
+              </Magnetic>
+            ))}
+          </div>
+        )}
       </div>
 
       <p className="text-center text-gray-700 text-[9px] pb-3">
         Move your cursor over any element ↑
       </p>
+    </div>
     </div>
   )
 }

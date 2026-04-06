@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { registerAnimation } from '@/core/AnimationRegistry'
-import { Edit2, Check, X } from 'lucide-react'
 import animationData from '@/data/animations/testimonial-stack-parallax.json'
 
 if (typeof window !== 'undefined') {
@@ -21,12 +20,6 @@ interface TestimonialCard {
   accentColor: string
 }
 
-const defaultCards: TestimonialCard[] = [
-  { id: 0, name: 'Sarah K.',  role: 'Product Designer',  quote: 'Absolutely game-changing. Animations are silky smooth and the code is clean.', bg: '#FF6B6B', textColor: '#fff',     accentColor: '#FFE66D' },
-  { id: 1, name: 'James T.',  role: 'Frontend Engineer', quote: 'I shipped 3x faster using AnimX. The GSAP integrations are next level.',       bg: '#FFE66D', textColor: '#1a1a1a', accentColor: '#FF6B6B' },
-  { id: 2, name: 'Priya M.',  role: 'Creative Director', quote: 'Finally, animations that look exactly like the design — no compromises.',       bg: '#A855F7', textColor: '#fff',     accentColor: '#FFE66D' },
-]
-
 const CARD_SLOTS      = [
   { landX: '-105%', startX: '-200%', startY: '160%' },
   { landX: '0%',    startX: '0%',    startY: '160%' },
@@ -34,7 +27,6 @@ const CARD_SLOTS      = [
 ]
 const PANEL_HEIGHT    = 560
 const SCROLL_PER_CARD = 320
-const TOTAL_INNER     = PANEL_HEIGHT + defaultCards.length * SCROLL_PER_CARD
 
 // ── Preview — 3 fanned cards, fits any card height ────────────────────
 function PreviewMode() {
@@ -57,7 +49,7 @@ function PreviewMode() {
 
       {/* Cards fanned in center */}
       <div className="absolute inset-0 flex items-center justify-center">
-        {defaultCards.map((card, i) => (
+        {(animationData.defaultProps.cards as TestimonialCard[]).map((card, i) => (
           <div
             key={card.id}
             className="absolute rounded-xl shadow-lg flex flex-col justify-between"
@@ -91,12 +83,25 @@ function PreviewMode() {
 }
 
 // ── Main component ────────────────────────────────────────────────────
-export function TestimonialStackCards({ isPreview = false }: { isPreview?: boolean }) {
-  const [isMounted,   setIsMounted]   = useState(false)
-  const [isEditing,   setIsEditing]   = useState(false)
-  const [editingText, setEditingText] = useState(false)
-  const [bgText,      setBgText]      = useState({ first: "What's", second: 'Everyone', third: 'Talking' })
-  const [tempText,    setTempText]    = useState(bgText)
+export function TestimonialStackCards({ 
+  isPreview = false,
+  textColor   = animationData.defaultProps.textColor,
+  accentColor = animationData.defaultProps.accentColor,
+  bgTextFirst  = animationData.defaultProps.bgTextFirst as string,
+  bgTextSecond = animationData.defaultProps.bgTextSecond as string,
+  bgTextThird  = animationData.defaultProps.bgTextThird as string,
+  cards        = animationData.defaultProps.cards as TestimonialCard[]
+}: { 
+  isPreview?: boolean
+  textColor?: string
+  accentColor?: string
+  bgTextFirst?: string
+  bgTextSecond?: string
+  bgTextThird?: string
+  cards?: TestimonialCard[]
+}) {
+  const [isMounted, setIsMounted]   = useState(false)
+  const TOTAL_INNER = PANEL_HEIGHT + cards.length * SCROLL_PER_CARD
 
   const scrollWrapperRef = useRef<HTMLDivElement>(null)
   const scrollInnerRef   = useRef<HTMLDivElement>(null)
@@ -153,54 +158,20 @@ export function TestimonialStackCards({ isPreview = false }: { isPreview?: boole
   return (
     <div className="w-full space-y-3">
       <div className="flex gap-2 flex-wrap items-center">
-        {!isEditing ? (
-          <button onClick={() => setIsEditing(true)} className="px-3 py-2 bg-primary-500/20 hover:bg-primary-500/30 text-primary-400 rounded-lg text-xs font-medium transition-colors">
-            ✎ Edit Text
-          </button>
-        ) : (
-          <>
-            <button onClick={() => setEditingText(true)} className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs font-medium flex items-center gap-2 transition-colors">
-              <Edit2 className="w-3 h-3" /> Edit Background Text
-            </button>
-            <button onClick={() => setIsEditing(false)} className="px-3 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-xs font-medium transition-colors">
-              ✓ Done
-            </button>
-          </>
-        )}
         <span className="text-xs text-gray-500 ml-auto">↕ Scroll inside the box</span>
       </div>
-
-      {editingText && (
-        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-dark-600 rounded-xl p-6 max-w-sm w-full border border-white/10">
-            <h3 className="text-lg font-bold text-white mb-4">Edit Background Text</h3>
-            <div className="space-y-3">
-              {(['first', 'second', 'third'] as const).map((key, i) => (
-                <div key={key}>
-                  <label className="block text-xs text-gray-400 mb-1">Line {i + 1}</label>
-                  <input type="text" value={tempText[key]} onChange={e => setTempText({ ...tempText, [key]: e.target.value })} className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm" />
-                </div>
-              ))}
-              <div className="flex gap-2 pt-1">
-                <button onClick={() => { setBgText(tempText); setEditingText(false) }} className="flex-1 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors"><Check className="w-4 h-4" />Save</button>
-                <button onClick={() => { setTempText(bgText); setEditingText(false) }} className="flex-1 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors"><X className="w-4 h-4" />Cancel</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       <div ref={scrollWrapperRef} className="w-full rounded-xl overflow-y-scroll" style={{ height: `${PANEL_HEIGHT}px` }}>
         <div ref={scrollInnerRef} style={{ height: `${TOTAL_INNER}px` }}>
           <div ref={stickyRef} className="sticky top-0 overflow-hidden bg-[#f0e8d8]" style={{ height: `${PANEL_HEIGHT}px` }}>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none overflow-hidden">
-              <h1 ref={bgText1Ref} className="font-black text-black/10 leading-[0.85] whitespace-nowrap" style={{ fontSize: 'clamp(64px, 15vw, 140px)' }}>{bgText.first}</h1>
-              <h1 ref={bgText2Ref} className="font-black text-black/15 leading-[0.85] whitespace-nowrap" style={{ fontSize: 'clamp(64px, 15vw, 140px)' }}>{bgText.second}</h1>
-              <h1 ref={bgText3Ref} className="font-black text-black/10 leading-[0.85] whitespace-nowrap" style={{ fontSize: 'clamp(64px, 15vw, 140px)' }}>{bgText.third}</h1>
+              <h1 ref={bgText1Ref} className="font-black text-black/10 leading-[0.85] whitespace-nowrap" style={{ fontSize: 'clamp(64px, 15vw, 140px)' }}>{bgTextFirst}</h1>
+              <h1 ref={bgText2Ref} className="font-black text-black/15 leading-[0.85] whitespace-nowrap" style={{ fontSize: 'clamp(64px, 15vw, 140px)' }}>{bgTextSecond}</h1>
+              <h1 ref={bgText3Ref} className="font-black text-black/10 leading-[0.85] whitespace-nowrap" style={{ fontSize: 'clamp(64px, 15vw, 140px)' }}>{bgTextThird}</h1>
             </div>
 
             <div className="absolute inset-0 flex items-center justify-center">
-              {defaultCards.map((card, index) => (
+              {cards.map((card, index) => (
                 <div
                   key={card.id}
                   ref={el => { cardRefs.current[index] = el }}
@@ -211,12 +182,12 @@ export function TestimonialStackCards({ isPreview = false }: { isPreview?: boole
                     rotate: `${index === 0 ? '-3deg' : index === 2 ? '3deg' : '0deg'}`,
                   }}
                 >
-                  <div className="text-4xl font-black leading-none" style={{ color: card.accentColor, opacity: 0.7 }}>"</div>
-                  <p className="text-xs font-medium leading-relaxed" style={{ color: card.textColor }}>{card.quote}</p>
+                  <div className="text-4xl font-black leading-none" style={{ color: accentColor || card.accentColor, opacity: 0.7 }}>"</div>
+                  <p className="text-xs font-medium leading-relaxed" style={{ color: textColor || card.textColor }}>{card.quote}</p>
                   <div>
-                    <div className="w-6 h-0.5 mb-2 rounded-full" style={{ backgroundColor: card.accentColor }} />
-                    <p className="text-xs font-bold" style={{ color: card.textColor }}>{card.name}</p>
-                    <p className="text-[10px] mt-0.5" style={{ color: card.accentColor }}>{card.role}</p>
+                    <div className="w-6 h-0.5 mb-2 rounded-full" style={{ backgroundColor: accentColor || card.accentColor }} />
+                    <p className="text-xs font-bold" style={{ color: textColor || card.textColor }}>{card.name}</p>
+                    <p className="text-[10px] mt-0.5" style={{ color: accentColor || card.accentColor }}>{card.role}</p>
                   </div>
                 </div>
               ))}
@@ -240,7 +211,7 @@ registerAnimation({
   engine:       animationData.engine as any,
   component:    TestimonialStackCards,
   defaultProps: animationData.defaultProps,
-  controls:     animationData.controls,
+  controls:     animationData.controls as any,
   code:         animationData.code,
   animxSyntax:  animationData.animxSyntax,
   description:  animationData.description,

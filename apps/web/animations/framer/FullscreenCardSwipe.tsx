@@ -408,7 +408,7 @@ registerAnimation({
   id: animationData.id, name: animationData.name,
   category: animationData.category as any, engine: animationData.engine as any,
   component: FullscreenCardSwipe, defaultProps: animationData.defaultProps,
-  controls: animationData.controls, code: animationData.code,
+  controls: animationData.controls as any, code: animationData.code,
   animxSyntax: animationData.animxSyntax, description: animationData.description,
   tags: animationData.tags, difficulty: animationData.difficulty as any,
 })

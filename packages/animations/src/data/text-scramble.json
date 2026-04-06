@@ -34,6 +34,18 @@
       "label": "Text Color",
       "type": "color",
       "default": "#00c3ff"
+    },
+    {
+      "key": "words",
+      "label": "Words Array (JSON)",
+      "type": "json",
+      "default": ["ANIMATE", "CREATE", "INSPIRE", "DESIGN", "BUILD"]
+    },
+    {
+      "key": "scrambleChars",
+      "label": "Scramble Characters",
+      "type": "text",
+      "default": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&"
     }
   ],
   "code": "// Text Scramble Effect\nfunction scramble(target: string, speed = 40) {\n  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&'\n  let iteration = 0\n  const interval = setInterval(() => {\n    el.innerText = target\n      .split('')\n      .map((char, i) => {\n        if (i < iteration) return char\n        return chars[Math.floor(Math.random() * chars.length)]\n      })\n      .join('')\n    if (iteration >= target.length) clearInterval(interval)\n    iteration += 1 / 3\n  }, speed)\n}",

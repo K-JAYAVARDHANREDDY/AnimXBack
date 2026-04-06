@@ -79,11 +79,15 @@ function StatCard({
 export function CounterAnimation({
   duration    = animationData.defaultProps.duration,   // seconds from JSON
   counters    = animationData.defaultProps.counters as Counter[],
+  heading     = animationData.defaultProps.heading as string,
+  subheading  = animationData.defaultProps.subheading as string,
   accentColor = animationData.defaultProps.accentColor,
   isPreview   = false,
 }: {
   duration?:    number
   counters?:    Counter[]
+  heading?:     string
+  subheading?:  string
   accentColor?: string
   isPreview?:   boolean
 }) {
@@ -135,8 +139,8 @@ export function CounterAnimation({
         {/* Header + Replay */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-black text-white">By the Numbers</h2>
-            <p className="text-gray-500 text-xs mt-0.5">Every metric counts</p>
+            <h2 className="text-xl font-black text-white">{heading}</h2>
+            <p className="text-gray-500 text-xs mt-0.5">{subheading}</p>
           </div>
 
           <button

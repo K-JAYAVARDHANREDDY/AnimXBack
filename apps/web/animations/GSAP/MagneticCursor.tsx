@@ -103,6 +103,8 @@ export function MagneticCursor({
   strength  = animationData.defaultProps.strength,
   radius    = animationData.defaultProps.radius,
   bgColor   = animationData.defaultProps.bgColor,
+  labelText = (animationData.defaultProps as any).labelText || 'Get Started →',
+  textColor = (animationData.defaultProps as any).textColor || '#ffffff',
   isPreview = false,
 }: {
   strength?:  number
@@ -193,13 +195,14 @@ export function MagneticCursor({
         <div className="flex items-center gap-3 flex-wrap justify-center">
           <Magnetic strength={strength} radius={radius}>
             <button
-              className="px-6 py-2.5 rounded-full text-xs font-bold text-white cursor-pointer"
+              className="px-6 py-2.5 rounded-full text-xs font-bold cursor-pointer"
               style={{
+                color: textColor,
                 background: `linear-gradient(135deg, ${bgColor}, #9b5cf6)`,
                 boxShadow: `0 6px 24px ${bgColor}40`,
               }}
             >
-              View our work →
+              {labelText}
             </button>
           </Magnetic>
 

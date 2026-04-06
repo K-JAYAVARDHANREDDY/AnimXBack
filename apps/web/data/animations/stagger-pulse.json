@@ -9,7 +9,8 @@
   "defaultProps": {
     "accentColor": "#0ea5e9",
     "gridSize": 5,
-    "animationType": "pulse"
+    "animationType": "pulse",
+    "staggerDelay": 80
   },
   "controls": [
     {
@@ -24,6 +25,24 @@
       "type": "select",
       "options": ["pulse", "bounce", "ping", "spin"],
       "default": "pulse"
+    },
+    {
+      "key": "gridSize",
+      "label": "Grid Size",
+      "type": "range",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "key": "staggerDelay",
+      "label": "Stagger Delay",
+      "type": "range",
+      "min": 10,
+      "max": 400,
+      "step": 10,
+      "default": 80
     }
   ],
   "code": "// 1. Typing indicator — animate-bounce with stagger\n<div className=\"flex items-center gap-1.5 px-4 py-3 bg-white/5 rounded-2xl\">\n  {[0, 1, 2].map(i => (\n    <div\n      key={i}\n      className=\"w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce\"\n      style={{ animationDelay: `${i * 150}ms` }}\n    />\n  ))}\n</div>\n\n// 2. Skeleton loader — animate-pulse\n<div className=\"flex gap-3 p-4\">\n  <div className=\"w-9 h-9 rounded-full bg-white/10 animate-pulse\" />\n  <div className=\"flex-1 space-y-2\">\n    <div className=\"h-2.5 bg-white/10 rounded-full animate-pulse\" style={{ width: '30%', animationDelay: '100ms' }} />\n    <div className=\"h-2 bg-white/10 rounded-full animate-pulse\" style={{ animationDelay: '150ms' }} />\n  </div>\n</div>\n\n// 3. Live ping indicator — animate-ping\n<div className=\"relative inline-flex\">\n  <span className=\"w-2.5 h-2.5 rounded-full bg-green-400\" />\n  <span className=\"absolute inset-0 w-2.5 h-2.5 rounded-full bg-green-400 animate-ping opacity-60\" />\n</div>\n\n// 4. Notification badge ping\n<div className=\"relative\">\n  <span className=\"absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 animate-ping opacity-75\" />\n  <span className=\"absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] flex items-center justify-center\">3</span>\n</div>",

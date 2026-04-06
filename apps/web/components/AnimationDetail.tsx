@@ -7,6 +7,7 @@ import { ArrowLeft, Sparkles } from 'lucide-react'
 import { CodeViewer } from './CodeViewer'
 import { ControlPanel } from './ControlPanel'
 import { useAnimationRegistry } from '@/core/AnimationRegistry'
+import { generateAnimxCode } from '@/lib/generateAnimxCode'
 import type { AnimationDTO } from '../types/animation.types'
 
 interface AnimationDetailProps {
@@ -27,19 +28,16 @@ const difficultyColors = {
   hard:   'text-red-400 bg-red-500/10 border-red-500/30',
 }
 
-// sessionStorage key — must match page.tsx
-const KEY_DASHBOARD = 'animx-dashboard-entered'
-
 export function AnimationDetail({ animation }: AnimationDetailProps) {
   const router = useRouter()
   const [animationProps, setAnimationProps] = useState(animation.defaultProps)
 
+  // Generate real, working React JSX code from the current control values
+  const generatedCode = generateAnimxCode(animation.id, animationProps)
+
   // The store holds slim DTOs; the live React component is registered separately
-  // by the dynamic import in the animation page. Look it up by ID.
   const Component = useAnimationRegistry(s => s.components[animation.id])
 
-  // Ensure the dashboard key is set before navigating back,
-  // so page.tsx always lands on the dashboard stage, never the landing page.
   const handleBackToDashboard = () => {
     router.push('/dashboard')
   }
@@ -59,7 +57,6 @@ export function AnimationDetail({ animation }: AnimationDetailProps) {
       <header className="relative z-10 border-b border-white/10 bg-dark-500/80 backdrop-blur-xl sticky top-0">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            {/* Back Button — always returns to dashboard */}
             <button
               onClick={handleBackToDashboard}
               className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group"
@@ -67,7 +64,6 @@ export function AnimationDetail({ animation }: AnimationDetailProps) {
               <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
               <span>Back to Dashboard</span>
             </button>
-
           </div>
         </div>
       </header>
@@ -144,10 +140,7 @@ export function AnimationDetail({ animation }: AnimationDetailProps) {
                   <span className="w-2 h-2 bg-primary-400 rounded-full animate-pulse" />
                   Code
                 </h2>
-                <CodeViewer
-                  fullCode={animation.code}
-                  animxSyntax={animation.animxSyntax}
-                />
+                <CodeViewer code={generatedCode} />
               </div>
             </div>
           </div>

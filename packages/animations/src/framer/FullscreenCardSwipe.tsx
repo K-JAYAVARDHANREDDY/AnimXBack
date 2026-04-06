@@ -22,6 +22,12 @@ interface Page {
   bg: string
   accent: string
   textColor: string
+  /** Optional background image URL - takes precedence over bg color */
+  image?: string
+  /** Image position (default: 'center') */
+  imagePosition?: string
+  /** Overlay opacity for text readability (0-1, default: 0.4) */
+  overlayOpacity?: number
 }
 
 // ── Preview card — auto-cycles through pages ──────────────────────────
@@ -57,10 +63,22 @@ function PreviewCard({ pages }: { pages: Page[] }) {
           onAnimationComplete={() => { isAnimating.current = false }}
           className="absolute inset-0 flex flex-col justify-end"
           style={{
-            background: page.bg,
+            background: page.image 
+              ? `url(${page.image}) ${page.imagePosition || 'center'} / cover no-repeat`
+              : page.bg,
             padding: '12px 14px',
+            position: 'relative',
           }}
         >
+          {/* Dark overlay for image backgrounds */}
+          {page.image && (
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: `rgba(0,0,0,${page.overlayOpacity ?? 0.4})`,
+              pointerEvents: 'none',
+            }} />
+          )}
+
           {/* Ghost number */}
           <div style={{
             position: 'absolute', top: -8, right: 4,
@@ -309,6 +327,29 @@ export function FullscreenCardSwipe({
                   <label className="block text-xs text-gray-400 mb-1">Subtitle</label>
                   <textarea value={editForm.subtitle || ''} onChange={e => setEditForm({ ...editForm, subtitle: e.target.value })} className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm resize-none" rows={2} />
                 </div>
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">Background Image URL (optional - overrides bg color)</label>
+                  <input type="text" value={editForm.image || ''} onChange={e => setEditForm({ ...editForm, image: e.target.value || undefined })} placeholder="https://example.com/image.jpg" className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm" />
+                </div>
+                {editForm.image && (
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs text-gray-400 mb-1">Image Position</label>
+                      <select value={editForm.imagePosition || 'center'} onChange={e => setEditForm({ ...editForm, imagePosition: e.target.value })} className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm">
+                        <option value="center">Center</option>
+                        <option value="top">Top</option>
+                        <option value="bottom">Bottom</option>
+                        <option value="left">Left</option>
+                        <option value="right">Right</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-400 mb-1">Overlay Opacity</label>
+                      <input type="range" min="0" max="1" step="0.1" value={editForm.overlayOpacity ?? 0.4} onChange={e => setEditForm({ ...editForm, overlayOpacity: parseFloat(e.target.value) })} className="w-full" />
+                      <span className="text-xs text-gray-500">{editForm.overlayOpacity ?? 0.4}</span>
+                    </div>
+                  </div>
+                )}
                 <div className="grid grid-cols-3 gap-3">
                   {[['Background', 'bg', '#0d0d14'], ['Accent', 'accent', '#e8ff3c'], ['Text', 'textColor', '#f0ede8']].map(([label, key, def]) => (
                     <div key={key}>
@@ -339,13 +380,25 @@ export function FullscreenCardSwipe({
             onAnimationComplete={() => { isAnimating.current = false; accDelta.current = 0 }}
             style={{
               position: 'absolute', inset: 0, width: '100%', height: '100%',
-              background: page.bg, display: 'flex', flexDirection: 'column',
+              background: page.image 
+                ? `url(${page.image}) ${page.imagePosition || 'center'} / cover no-repeat`
+                : page.bg, 
+              display: 'flex', flexDirection: 'column',
               justifyContent: 'flex-end',
               padding: 'clamp(32px, 5vh, 60px) clamp(24px, 5vw, 72px)',
               willChange: 'transform',
             }}
           >
-            <div style={{ position: 'absolute', top: 'clamp(20px, 3vh, 40px)', left: 'clamp(24px, 5vw, 72px)', fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: '0.28em', color: page.accent, opacity: 0.8 }}>
+            {/* Dark overlay for image backgrounds */}
+            {page.image && (
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: `rgba(0,0,0,${page.overlayOpacity ?? 0.4})`,
+                pointerEvents: 'none',
+              }} />
+            )}
+
+            <div style={{ position: 'absolute', top: 'clamp(20px, 3vh, 40px)', left: 'clamp(24px, 5vw, 72px)', fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: '0.28em', color: page.accent, opacity: 0.8, zIndex: 1 }}>
               {page.label} / {String(total).padStart(2, '0')}
             </div>
 
@@ -356,20 +409,20 @@ export function FullscreenCardSwipe({
               </div>
             )}
 
-            <div style={{ position: 'absolute', top: -20, right: '2vw', fontFamily: "'Playfair Display', serif", fontWeight: 900, fontSize: 'clamp(100px, 15vw, 200px)', color: page.accent, opacity: 0.045, lineHeight: 1, userSelect: 'none', pointerEvents: 'none' }}>
+            <div style={{ position: 'absolute', top: -20, right: '2vw', fontFamily: "'Playfair Display', serif", fontWeight: 900, fontSize: 'clamp(100px, 15vw, 200px)', color: page.accent, opacity: 0.045, lineHeight: 1, userSelect: 'none', pointerEvents: 'none', zIndex: 1 }}>
               {page.label}
             </div>
-            <div style={{ position: 'absolute', top: 0, right: 0, width: 3, height: '30%', background: page.accent, opacity: 0.3 }} />
-            <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900, fontSize: 'clamp(40px, 6vw, 80px)', lineHeight: 1.0, color: page.textColor, whiteSpace: 'pre-line', letterSpacing: '-0.03em', marginBottom: 'clamp(14px, 2vh, 24px)' }}>
+            <div style={{ position: 'absolute', top: 0, right: 0, width: 3, height: '30%', background: page.accent, opacity: 0.3, zIndex: 1 }} />
+            <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 900, fontSize: 'clamp(40px, 6vw, 80px)', lineHeight: 1.0, color: page.textColor, whiteSpace: 'pre-line', letterSpacing: '-0.03em', marginBottom: 'clamp(14px, 2vh, 24px)', zIndex: 1, position: 'relative' }}>
               {page.title}
             </div>
-            <div style={{ width: 52, height: 3, background: page.accent, borderRadius: 2, marginBottom: 'clamp(12px, 2vh, 20px)' }} />
-            <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 'clamp(11px, 1vw, 14px)', lineHeight: 1.85, color: page.textColor, opacity: 0.55, maxWidth: 380 }}>
+            <div style={{ width: 52, height: 3, background: page.accent, borderRadius: 2, marginBottom: 'clamp(12px, 2vh, 20px)', zIndex: 1, position: 'relative' }} />
+            <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 'clamp(11px, 1vw, 14px)', lineHeight: 1.85, color: page.textColor, opacity: 0.55, maxWidth: 380, zIndex: 1, position: 'relative' }}>
               {page.subtitle}
             </div>
 
             {index === 0 && (
-              <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }} style={{ position: 'absolute', bottom: 'clamp(20px, 3vh, 40px)', right: 'clamp(24px, 5vw, 72px)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, color: page.accent, fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: '0.24em', opacity: 0.6 }}>
+              <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }} style={{ position: 'absolute', bottom: 'clamp(20px, 3vh, 40px)', right: 'clamp(24px, 5vw, 72px)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, color: page.accent, fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: '0.24em', opacity: 0.6, zIndex: 1 }}>
                 <span>SCROLL</span>
                 <div style={{ width: 1, height: 32, background: page.accent, opacity: 0.5 }} />
               </motion.div>

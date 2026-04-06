@@ -96,7 +96,7 @@ function PulseBlock({ width, height = 8, delay, radius = 4 }: { width: number | 
 }
 
 // ── Typing indicator ─────────────────────────────────────────────────
-function TypingDots({ color = '#9ca3af' }: { color?: string }) {
+function TypingDots({ color = '#9ca3af', staggerDelay = 150 }: { color?: string, staggerDelay?: number }) {
   return (
     <div style={{
       display: 'flex',
@@ -108,8 +108,8 @@ function TypingDots({ color = '#9ca3af' }: { color?: string }) {
       width: 'fit-content',
     }}>
       <BounceDot color={color} delay={0} />
-      <BounceDot color={color} delay={150} />
-      <BounceDot color={color} delay={300} />
+      <BounceDot color={color} delay={staggerDelay} />
+      <BounceDot color={color} delay={staggerDelay * 2} />
     </div>
   )
 }
@@ -139,10 +139,11 @@ function NotificationBell({ count, color }: { count: number; color: string }) {
 }
 
 // ── Wave bars (music visualizer style) ───────────────────────────────
-function WaveBars({ color }: { color: string }) {
+function WaveBars({ color, gridSize = 10, staggerDelay = 80 }: { color: string, gridSize?: number, staggerDelay?: number }) {
+  void staggerDelay;
   return (
     <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 32 }}>
-      {[0.4, 0.7, 1.0, 0.8, 0.5, 0.9, 0.6, 0.75, 0.45, 0.85].map((scale, i) => (
+      {[0.4, 0.7, 1.0, 0.8, 0.5, 0.9, 0.6, 0.75, 0.45, 0.85].slice(0, gridSize).map((scale, i) => (
         <div
           key={i}
           style={{
@@ -160,45 +161,100 @@ function WaveBars({ color }: { color: string }) {
 }
 
 // ── Skeleton post card ────────────────────────────────────────────────
-function SkeletonPost({ delay = 0 }: { delay?: number }) {
+function SkeletonPost({ delay = 0, staggerDelay = 40 }: { delay?: number, staggerDelay?: number }) {
   return (
     <div style={{ display: 'flex', gap: 12, padding: '14px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
       <PulseBlock width={36} height={36} delay={delay} radius={18} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8, paddingTop: 2 }}>
         <div style={{ display: 'flex', gap: 8 }}>
-          <PulseBlock width="30%" height={10} delay={delay + 60} />
-          <PulseBlock width="15%" height={10} delay={delay + 100} />
+          <PulseBlock width="30%" height={10} delay={delay + staggerDelay} />
+          <PulseBlock width="15%" height={10} delay={delay + staggerDelay * 2.5} />
         </div>
-        <PulseBlock width="95%" height={8} delay={delay + 120} />
-        <PulseBlock width="80%" height={8} delay={delay + 160} />
-        <PulseBlock width="55%" height={8} delay={delay + 200} />
+        <PulseBlock width="95%" height={8} delay={delay + staggerDelay * 3} />
+        <PulseBlock width="80%" height={8} delay={delay + staggerDelay * 4} />
+        <PulseBlock width="55%" height={8} delay={delay + staggerDelay * 5} />
       </div>
     </div>
   )
 }
 
 type DemoTab = 'chat' | 'feed' | 'dashboard' | 'status'
+type AnimKind = 'bounce' | 'pulse' | 'ping' | 'spin' | 'wave'
+type ShapeKind = 'circle' | 'square' | 'rounded' | 'bar' | 'ring'
 
 // ── Main component ─────────────────────────────────────────────────────
 export function StaggerPulse({
   accentColor = animationData.defaultProps.accentColor,
+  gridSize = (animationData.defaultProps as any).gridSize || 5,
+  animationType = (animationData.defaultProps as any).animationType || "pulse",
+  staggerDelay = (animationData.defaultProps as any).staggerDelay || 80,
   isPreview = false,
+  /** Background color */
+  bgColor = '#111118',
+  /** Container border radius */
+  borderRadius = 12,
+  /** Default animation speed (ms) */
+  defaultSpeed = 800,
+  /** Default number of columns */
+  defaultCols = 6,
+  /** Default number of rows */
+  defaultRows = 3,
+  /** Default element size (px) */
+  defaultElemSize = 20,
+  /** Default stagger pattern */
+  defaultPattern = 'grid' as 'grid' | 'diagonal' | 'random' | 'ripple',
+  /** Default animation kind */
+  defaultAnimKind = 'bounce' as AnimKind,
+  /** Default shape kind */
+  defaultShapeKind = 'circle' as ShapeKind,
+  /** Show tabs */
+  showTabs = true,
+  /** Default tab */
+  defaultTab = 'chat' as DemoTab,
+  /** Skeleton load delay (ms) */
+  skeletonLoadDelay = 2500,
+  /** Show footer */
+  showFooter = true,
+  /** Ping dot size */
+  pingDotSize = 10,
+  /** Typing dots color */
+  typingDotsColor = '#9ca3af',
+  /** Online status color */
+  onlineStatusColor = '#22c55e',
 }: {
   accentColor?: string
   gridSize?: number
   animationType?: string
+  staggerDelay?: number
   isPreview?: boolean
+  bgColor?: string
+  borderRadius?: number
+  defaultSpeed?: number
+  defaultCols?: number
+  defaultRows?: number
+  defaultElemSize?: number
+  defaultPattern?: 'grid' | 'diagonal' | 'random' | 'ripple'
+  defaultAnimKind?: AnimKind
+  defaultShapeKind?: ShapeKind
+  showTabs?: boolean
+  defaultTab?: DemoTab
+  skeletonLoadDelay?: number
+  showFooter?: boolean
+  pingDotSize?: number
+  typingDotsColor?: string
+  onlineStatusColor?: string
 }) {
   useInjectStyles()
 
-  const [activeTab, setActiveTab] = useState<DemoTab>('chat')
+  const [activeTab, setActiveTab] = useState<DemoTab>(defaultTab)
+  void { animationType, bgColor, borderRadius, defaultSpeed, defaultCols, defaultRows, defaultElemSize, defaultPattern, defaultAnimKind, defaultShapeKind, showTabs, showFooter, pingDotSize, typingDotsColor, onlineStatusColor };
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
     setLoaded(false)
-    const t = setTimeout(() => setLoaded(true), 2500)
+    const t = setTimeout(() => setLoaded(true), skeletonLoadDelay)
     return () => clearTimeout(t)
-  }, [activeTab])
+  }, [activeTab, skeletonLoadDelay])
 
   // ── PREVIEW ──────────────────────────────────────────────────────────
   if (isPreview) {
@@ -320,7 +376,7 @@ export function StaggerPulse({
             {/* Typing indicator */}
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8 }}>
               <div style={{ width: 24, height: 24, borderRadius: '50%', backgroundColor: 'rgba(99,102,241,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, color: '#a5b4fc', flexShrink: 0 }}>P</div>
-              <TypingDots />
+              <TypingDots staggerDelay={staggerDelay} />
               <span style={{ color: '#4b5563', fontSize: 10, marginBottom: 4 }}>typing…</span>
             </div>
           </div>
@@ -420,7 +476,7 @@ export function StaggerPulse({
               {/* Wave bars decoration */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                 <span style={{ color: '#4b5563', fontSize: 10 }}>Live audio</span>
-                <WaveBars color={accentColor} />
+                <WaveBars color={accentColor} gridSize={gridSize * 2} staggerDelay={staggerDelay} />
               </div>
             </div>
           ) : (
@@ -514,9 +570,6 @@ export function StaggerPulse({
 }
 
 // ── Stagger Playground ────────────────────────────────────────────────
-type AnimKind = 'bounce' | 'pulse' | 'ping' | 'spin' | 'wave'
-type ShapeKind = 'circle' | 'square' | 'rounded' | 'bar' | 'ring'
-
 const ANIM_OPTIONS: { key: AnimKind; label: string; desc: string }[] = [
   { key: 'bounce', label: 'Bounce', desc: 'Up/down spring' },
   { key: 'pulse', label: 'Pulse', desc: 'Fade in/out' },

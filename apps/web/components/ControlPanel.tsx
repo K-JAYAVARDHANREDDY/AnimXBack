@@ -1,12 +1,47 @@
   'use client'
 
   import { motion } from 'framer-motion'
+  import { useState, useEffect } from 'react'
   import type { ControlDefinition } from '../types/animation.types'
 
   interface ControlPanelProps {
     controls?: ControlDefinition[]
     values: Record<string, any>
     onChange: (values: Record<string, any>) => void
+  }
+
+  function JsonControl({ value, onChange }: { value: any, onChange: (val: any) => void }) {
+    const [textEditor, setTextEditor] = useState(() => JSON.stringify(value, null, 2))
+    const [hasError, setHasError] = useState(false)
+
+    useEffect(() => {
+      setTextEditor(JSON.stringify(value, null, 2))
+      setHasError(false)
+    }, [value])
+
+    const handleBlur = () => {
+      try {
+        const parsed = JSON.parse(textEditor)
+        setHasError(false)
+        onChange(parsed)
+        setTextEditor(JSON.stringify(parsed, null, 2))
+      } catch {
+        setHasError(true)
+      }
+    }
+
+    return (
+      <div className="space-y-1">
+        <textarea
+          value={textEditor}
+          onChange={(e) => setTextEditor(e.target.value)}
+          onBlur={handleBlur}
+          className={`w-full h-40 px-3 py-2 bg-dark-600/50 border ${hasError ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-primary-500'} rounded-lg text-white font-mono text-[11px] leading-relaxed focus:outline-none transition-colors resize-y`}
+          spellCheck={false}
+        />
+        {hasError && <p className="text-[10px] text-red-400">Invalid JSON format</p>}
+      </div>
+    )
   }
 
   export function ControlPanel({ controls, values, onChange }: ControlPanelProps) {
@@ -55,8 +90,9 @@
               <label className="text-sm font-medium text-gray-300">
                 {control.label}
               </label>
-              <span className="text-sm font-mono text-primary-400 bg-primary-500/10 px-2 py-0.5 rounded-md">
-                {values[control.key]}{getUnit(control.key)}
+              <span className="text-sm font-mono text-primary-400 bg-primary-500/10 px-2 py-0.5 rounded-md truncate max-w-[150px]">
+                {typeof values[control.key] === 'object' ? 'JSON' : values[control.key]}
+                {typeof values[control.key] !== 'object' && getUnit(control.key)}
               </span>
             </div>
 
@@ -129,6 +165,24 @@
                   {values[control.key] ?? control.default}
                 </span>
               </div>
+            )}
+
+            {/* Text Input */}
+            {control.type === 'text' && (
+              <input
+                type="text"
+                value={values[control.key] ?? control.default}
+                onChange={(e) => handleChange(control.key, e.target.value)}
+                className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary-500 transition-colors"
+              />
+            )}
+
+            {/* JSON / Array Editor */}
+            {control.type === 'json' && (
+              <JsonControl
+                value={values[control.key] ?? control.default}
+                onChange={(val) => handleChange(control.key, val)}
+              />
             )}
           </div>
         ))}

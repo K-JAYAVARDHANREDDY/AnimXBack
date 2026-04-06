@@ -44,6 +44,19 @@
       "type": "select",
       "options": ["logo", "signature", "icon", "circuit"],
       "default": "logo"
+    },
+    {
+      "key": "fillColor",
+      "label": "Fill Color",
+      "type": "color",
+      "default": "#00000000"
+    },
+    {
+      "key": "ease",
+      "label": "Easing",
+      "type": "select",
+      "options": ["power2.inOut", "power1.inOut", "linear", "elastic.out(1,0.3)", "back.inOut(1.7)"],
+      "default": "power2.inOut"
     }
   ],
   "code": "// SVG Path Drawing with GSAP\nconst paths = svgRef.current.querySelectorAll('path')\npaths.forEach(path => {\n  const length = path.getTotalLength()\n  gsap.set(path, {\n    strokeDasharray: length,\n    strokeDashoffset: length,\n  })\n  gsap.to(path, {\n    strokeDashoffset: 0,\n    duration: 2,\n    ease: 'power2.inOut',\n    scrollTrigger: {\n      trigger: path,\n      start: 'top 80%',\n      once: true\n    }\n  })\n})",

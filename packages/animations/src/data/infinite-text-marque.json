@@ -17,6 +17,18 @@
       "max": 100,
       "step": 10,
       "default": 50
+    },
+    {
+      "key": "topText",
+      "label": "Top Row Text",
+      "type": "text",
+      "default": "INNOVATION • CREATIVITY • DESIGN"
+    },
+    {
+      "key": "bottomText",
+      "label": "Bottom Row Text",
+      "type": "text",
+      "default": "ANIMATION • DEVELOPMENT • BRANDING"
     }
   ],
   "code": "gsap.registerPlugin(ScrollTrigger);\n\n// Top row - Moves LEFT\ngsap.to(topRow, {\n  x: '-50%',\n  duration: 50,\n  ease: 'none',\n  repeat: -1,\n});\n\n// Bottom row - Moves RIGHT  \ngsap.set(bottomRow, { x: '-50%' });\ngsap.to(bottomRow, {\n  x: '0%',\n  duration: 50,\n  ease: 'none',\n  repeat: -1,\n});",

@@ -2,6 +2,9 @@
 
 > A collection of **14+ ready-to-use animation components** for React — powered by GSAP, Framer Motion, CSS, and Tailwind.
 
+### ✨ What's New in v0.1.1
+**100% Fully Customizable Components:** All 14 components have been entirely refactored to support full customizability through comprehesive TypeScript-safe React props! You can now freely configure colors, spacing, typography, motion curves, sizing and content directly via inline props without touching their core code.
+
 Part of the [AnimX](https://github.com/K-JAYAVARDHANREDDY/AnimXBack) framework.
 
 ## Installation

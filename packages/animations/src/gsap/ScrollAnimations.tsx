@@ -13,25 +13,54 @@ export function HorizontalScrollText({
   bgColor       = animationData.defaultProps.bgColor,
   textColor     = animationData.defaultProps.textColor,
   isPreview     = false,
+  /** Font size for the scrolling text */
+  fontSize = '6rem',
+  /** Font weight */
+  fontWeight = 700,
+  /** Letter spacing */
+  letterSpacing,
+  /** Text stroke width */
+  textStrokeWidth = 2,
+  /** Text stroke color */
+  textStrokeColor = 'rgba(0,0,0,0.1)',
+  /** Separator between repeated text */
+  separator = ' • ',
+  /** Number of times to repeat the text */
+  repeatCount = 6,
+  /** Container height */
+  height = 220,
+  /** Padding vertical */
+  paddingY = '3rem',
+  /** Border radius */
+  borderRadius = '0.75rem',
+  /** Show scroll hint */
+  showScrollHint = true,
 }: {
   text?:          string
   scrubDuration?: number
   bgColor?:       string
   textColor?:     string
   isPreview?:     boolean
+  fontSize?:      string
+  fontWeight?:    number
+  letterSpacing?: string
+  textStrokeWidth?: number
+  textStrokeColor?: string
+  separator?:     string
+  repeatCount?:   number
+  height?:        number
+  paddingY?:      string
+  borderRadius?:  string
+  showScrollHint?: boolean
 }) {
   const scrollWrapperRef = useRef<HTMLDivElement>(null)
   const scrollInnerRef   = useRef<HTMLDivElement>(null)
   const stickyRef        = useRef<HTMLDivElement>(null)
   const textRef          = useRef<HTMLHeadingElement>(null)
 
-  const [customText, setCustomText] = useState(text)
-  const [tempText,   setTempText]   = useState(text)
-  const [isEditing,  setIsEditing]  = useState(false)
   const [isMounted,  setIsMounted]  = useState(false)
 
   useEffect(() => { setIsMounted(true) }, [])
-  useEffect(() => { setCustomText(text); setTempText(text) }, [text])
 
   useEffect(() => {
     if (isPreview || !isMounted || !scrollWrapperRef.current || !textRef.current) return
@@ -49,9 +78,7 @@ export function HorizontalScrollText({
       })
     })
     return () => ctx.revert()
-  }, [isPreview, isMounted, scrubDuration, customText])
-
-  const handleApplyText = () => { setCustomText(tempText); setIsEditing(false) }
+  }, [isPreview, isMounted, scrubDuration, text])
 
   // ── PREVIEW — static image snapshot of the animation ─────────────
   if (isPreview) {
@@ -79,13 +106,15 @@ export function HorizontalScrollText({
     )
   }
 
+  const repeatedText = Array(repeatCount).fill(text).join(separator)
+
   // ── Loading ───────────────────────────────────────────────────────
   if (!isMounted) {
     return (
       <div className="w-full space-y-3">
-        <div className="relative w-full overflow-hidden rounded-xl py-12" style={{ backgroundColor: bgColor }}>
-          <h1 className="font-bold whitespace-nowrap uppercase" style={{ fontSize: '6rem', color: textColor, lineHeight: 1 } as React.CSSProperties}>
-            {text} • {text} • {text} • {text}
+        <div className="relative w-full overflow-hidden" style={{ backgroundColor: bgColor, padding: paddingY, borderRadius }}>
+          <h1 className="font-bold whitespace-nowrap uppercase" style={{ fontSize, fontWeight, color: textColor, lineHeight: 1, letterSpacing } as React.CSSProperties}>
+            {repeatedText}
           </h1>
         </div>
       </div>
@@ -95,48 +124,29 @@ export function HorizontalScrollText({
   // ── FULL DETAIL PAGE ──────────────────────────────────────────────
   return (
     <div className="w-full space-y-3">
-
-      {!isEditing ? (
-        <button onClick={() => setIsEditing(true)} className="px-3 py-1.5 text-xs bg-primary-500/20 hover:bg-primary-500/30 text-primary-400 rounded-md transition-colors">
-          ✎ Edit Text
-        </button>
-      ) : (
-        <div className="space-y-2 p-3 bg-dark-600/50 rounded-lg">
-          <div>
-            <label className="text-xs text-gray-400 mb-1 block">Custom Text:</label>
-            <input
-              type="text" value={tempText} onChange={e => setTempText(e.target.value)}
-              placeholder="Enter your text"
-              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-primary-500"
-              onKeyDown={e => { if (e.key === 'Enter') handleApplyText() }}
-            />
-          </div>
-          <div className="flex gap-2">
-            <button onClick={handleApplyText} className="flex-1 px-3 py-1.5 text-xs bg-primary-500 hover:bg-primary-600 text-white rounded-md transition-colors">✓ Apply</button>
-            <button onClick={() => { setTempText(customText); setIsEditing(false) }} className="flex-1 px-3 py-1.5 text-xs bg-white/5 hover:bg-white/10 text-white rounded-md transition-colors">Cancel</button>
-          </div>
-        </div>
-      )}
-
-      <div ref={scrollWrapperRef} className="relative w-full rounded-xl overflow-y-scroll" style={{ height: '220px' }}>
-        <div ref={scrollInnerRef} style={{ height: '660px' }}>
-          <div ref={stickyRef} className="sticky top-0 w-full overflow-hidden py-12" style={{ backgroundColor: bgColor, height: '220px' }}>
+      <div ref={scrollWrapperRef} className="relative w-full overflow-y-scroll" style={{ height, borderRadius }}>
+        <div ref={scrollInnerRef} style={{ height: height * 3 }}>
+          <div ref={stickyRef} className="sticky top-0 w-full overflow-hidden" style={{ backgroundColor: bgColor, height, padding: paddingY }}>
             <h1
               ref={textRef}
-              className="font-bold whitespace-nowrap uppercase will-change-transform"
-              style={{ fontSize: '6rem', color: textColor, lineHeight: 1, WebkitTextStroke: '2px rgba(0,0,0,0.1)' } as React.CSSProperties}
+              className="whitespace-nowrap uppercase will-change-transform"
+              style={{ fontSize, fontWeight, color: textColor, lineHeight: 1, letterSpacing, WebkitTextStroke: `${textStrokeWidth}px ${textStrokeColor}` } as React.CSSProperties}
             >
-              {customText} • {customText} • {customText} • {customText} • {customText} • {customText}
+              {repeatedText}
             </h1>
-            <div className="absolute bottom-2 right-3 text-[10px] opacity-40" style={{ color: textColor }}>↕ scroll here</div>
+            {showScrollHint && (
+              <div className="absolute bottom-2 right-3 text-[10px] opacity-40" style={{ color: textColor }}>↕ scroll here</div>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-between text-xs">
-        <p className="text-gray-500">Scroll inside the box above to animate</p>
-        <p className="text-gray-500">Scrub: {scrubDuration}s</p>
-      </div>
+      {showScrollHint && (
+        <div className="flex items-center justify-between text-xs">
+          <p className="text-gray-500">Scroll inside the box above to animate</p>
+          <p className="text-gray-500">Scrub: {scrubDuration}s</p>
+        </div>
+      )}
     </div>
   )
 }

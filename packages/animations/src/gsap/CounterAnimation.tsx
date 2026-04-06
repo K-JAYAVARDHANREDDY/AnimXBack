@@ -17,6 +17,14 @@ function StatCard({
   size,
   duration,
   replayKey,
+  valueColor,
+  labelColor,
+  borderColor,
+  valueFontSize,
+  labelFontSize,
+  cardPadding,
+  cardBorderRadius,
+  easing
 }: {
   counter:     Counter
   accentColor: string
@@ -24,9 +32,20 @@ function StatCard({
   size:        'sm' | 'lg'
   duration:    number          // ← now passed in, not hardcoded
   replayKey:   number
+  valueColor?: string
+  labelColor?: string
+  borderColor?: string
+  valueFontSize?: string
+  labelFontSize?: string
+  cardPadding?: string
+  cardBorderRadius?: string
+  easing?: string
 }) {
   const [display, setDisplay] = useState(0)
   const rafRef = useRef<number | null>(null)
+  
+  // To avoid unused var error for optional unused prop
+  void easing;
 
   useEffect(() => {
     setDisplay(0)
@@ -48,13 +67,12 @@ function StatCard({
   }, [replayKey, counter.value, delay, duration])  // ← duration in deps too
 
   return (
-    <div className={`flex flex-col items-center justify-center rounded-2xl border border-white/8
-      bg-white/[0.04] hover:bg-white/[0.07] transition-colors
-      ${size === 'sm' ? 'py-3 px-2' : 'py-8 px-4'}`}
+    <div className={`flex flex-col items-center justify-center rounded-2xl border bg-white/[0.04] hover:bg-white/[0.07] transition-colors`}
+         style={{ borderColor: borderColor || 'rgba(255,255,255,0.08)', borderRadius: size === 'lg' ? cardBorderRadius : '0.5rem', padding: size === 'lg' ? cardPadding : '0.75rem 0.5rem' }}
     >
       <span
         className={`font-black tabular-nums leading-none ${size === 'sm' ? 'text-base' : 'text-4xl'}`}
-        style={{ color: accentColor }}
+        style={{ color: valueColor || accentColor, fontSize: size === 'lg' ? valueFontSize : undefined }}
       >
         {counter.prefix}{display.toLocaleString()}{counter.suffix}
       </span>
@@ -65,6 +83,7 @@ function StatCard({
       <span
         className={`font-semibold text-gray-400 uppercase tracking-widest text-center leading-tight
           ${size === 'sm' ? 'text-[8px]' : 'text-[11px]'}`}
+        style={{ color: labelColor || '#9ca3af', fontSize: size === 'lg' ? labelFontSize : undefined }}
       >
         {counter.label}
       </span>
@@ -76,13 +95,56 @@ function StatCard({
 export function CounterAnimation({
   duration    = animationData.defaultProps.duration,   // seconds from JSON
   counters    = animationData.defaultProps.counters as Counter[],
+  heading     = animationData.defaultProps.heading as string,
+  subheading  = animationData.defaultProps.subheading as string,
   accentColor = animationData.defaultProps.accentColor,
   isPreview   = false,
+  /** Background color of container */
+  bgColor = '#1a1a2e',
+  /** Text color for counter values */
+  valueColor,
+  /** Text color for labels */
+  labelColor = '#9ca3af',
+  /** Border color */
+  borderColor = 'rgba(255,255,255,0.08)',
+  /** Font size for counter values (detail view) */
+  valueFontSize = '2.25rem',
+  /** Font size for labels */
+  labelFontSize = '0.6875rem',
+  /** Grid columns (default: 2) */
+  columns = 2,
+  /** Gap between cards */
+  gap = '1rem',
+  /** Card padding */
+  cardPadding = '2rem 1rem',
+  /** Border radius of cards */
+  cardBorderRadius = '1rem',
+  /** Show replay button */
+  showReplay = true,
+  /** Stagger delay between counters (ms) */
+  staggerDelay = 150,
+  /** Easing function (CSS easing name) */
+  easing = 'ease-out',
 }: {
   duration?:    number
   counters?:    Counter[]
+  heading?:     string
+  subheading?:  string
   accentColor?: string
   isPreview?:   boolean
+  bgColor?:     string
+  valueColor?:  string
+  labelColor?:  string
+  borderColor?: string
+  valueFontSize?: string
+  labelFontSize?: string
+  columns?:     number
+  gap?:         string
+  cardPadding?: string
+  cardBorderRadius?: string
+  showReplay?:  boolean
+  staggerDelay?: number
+  easing?:      string
 }) {
   const [isMounted, setIsMounted] = useState(false)
   const [replayKey, setReplayKey] = useState(0)
@@ -114,7 +176,15 @@ export function CounterAnimation({
             key={i}
             counter={c}
             accentColor={accentColor}
-            delay={i * 100}
+            delay={i * staggerDelay}
+            valueColor={valueColor}
+            labelColor={labelColor}
+            borderColor={borderColor}
+            valueFontSize={valueFontSize}
+            labelFontSize={labelFontSize}
+            cardPadding={cardPadding}
+            cardBorderRadius={cardBorderRadius}
+            easing={easing}
             size="sm"
             duration={durationMs}
             replayKey={replayKey}
@@ -127,15 +197,16 @@ export function CounterAnimation({
   // ── DETAIL PAGE ───────────────────────────────────────────────────
   return (
     <div className="w-full space-y-3">
-      <div className="w-full rounded-xl bg-dark-600 p-6 space-y-5">
+      <div className="w-full rounded-xl p-6 space-y-5" style={{ backgroundColor: bgColor }}>
 
         {/* Header + Replay */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-black text-white">By the Numbers</h2>
-            <p className="text-gray-500 text-xs mt-0.5">Every metric counts</p>
+            <h2 className="text-xl font-black text-white">{heading}</h2>
+            <p className="text-gray-500 text-xs mt-0.5">{subheading}</p>
           </div>
 
+          {showReplay && (
           <button
             onClick={handleReplay}
             title="Replay animation"
@@ -149,16 +220,25 @@ export function CounterAnimation({
             />
             Replay
           </button>
+          )}
         </div>
 
         {/* 2×2 grid */}
-        <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto">
+        <div className="grid max-w-sm mx-auto" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`, gap }}>
           {counters.slice(0, 4).map((c, i) => (
             <StatCard
               key={i}
               counter={c}
               accentColor={accentColor}
-              delay={i * 150}
+              delay={i * staggerDelay}
+              valueColor={valueColor}
+              labelColor={labelColor}
+              borderColor={borderColor}
+              valueFontSize={valueFontSize}
+              labelFontSize={labelFontSize}
+              cardPadding={cardPadding}
+              cardBorderRadius={cardBorderRadius}
+              easing={easing}
               size="lg"
               duration={durationMs}
               replayKey={replayKey}

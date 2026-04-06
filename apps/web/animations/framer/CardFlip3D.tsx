@@ -93,11 +93,13 @@ export function CardFlip3D({
   flipDirection = animationData.defaultProps.flipDirection as FlipDir,
   duration = animationData.defaultProps.duration,
   accentColor = animationData.defaultProps.accentColor,
+  trigger = (animationData.defaultProps as any).trigger || 'hover',
   isPreview = false,
 }: {
   flipDirection?: FlipDir
   duration?: number
   accentColor?: string
+  trigger?: 'hover' | 'click'
   isPreview?: boolean
 }) {
   // ── PREVIEW ─────────────────────────────────────────────────────────
@@ -141,7 +143,7 @@ export function CardFlip3D({
             <FlipCard
               direction={flipDirection}
               duration={duration}
-              trigger={card.trigger}
+              trigger={trigger}
               front={
                 <div
                   className="w-full h-full flex flex-col items-center justify-center gap-3 border border-white/10"

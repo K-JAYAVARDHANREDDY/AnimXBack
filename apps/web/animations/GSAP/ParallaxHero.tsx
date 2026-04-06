@@ -82,7 +82,7 @@ function ParallaxContainer({
 // ─────────────────────────────────────────────────────────────────────
 // TAB 1 — SaaS Landing Page (like Stripe / Linear)
 // ─────────────────────────────────────────────────────────────────────
-function SaaSLanding() {
+function SaaSLanding({ headline, subline, bgColor, accentColor, layerSpeed1, layerSpeed2, layerSpeed3 }: any) {
   return (
     <ParallaxContainer bg="#04040f" speeds={[0.25, 0.55, 0.9]}>
       {({ layer1, layer2, layer3 }) => (
@@ -376,7 +376,13 @@ function ProductLaunch() {
 type DemoTab = 'saas' | 'travel' | 'portfolio' | 'product'
 
 export function ParallaxHero({
+  headline = (animationData.defaultProps as any).headline || "BEYOND\nLIMITS",
+  subline = (animationData.defaultProps as any).subline || "Scroll to explore the depth",
+  bgColor = (animationData.defaultProps as any).bgColor || "#0a0a0f",
   accentColor = animationData.defaultProps.accentColor,
+  layerSpeed1 = (animationData.defaultProps as any).layerSpeed1 || 0.3,
+  layerSpeed2 = (animationData.defaultProps as any).layerSpeed2 || 0.6,
+  layerSpeed3 = (animationData.defaultProps as any).layerSpeed3 || 0.9,
   isPreview = false,
 }: {
   headline?: string
@@ -454,7 +460,7 @@ export function ParallaxHero({
       </div>
 
       {/* Demo */}
-      {activeTab === 'saas'      && <SaaSLanding />}
+      {activeTab === 'saas'      && <SaaSLanding headline={headline} subline={subline} bgColor={bgColor} accentColor={accentColor} layerSpeed1={layerSpeed1} layerSpeed2={layerSpeed2} layerSpeed3={layerSpeed3} />}
       {activeTab === 'travel'    && <TravelHero />}
       {activeTab === 'portfolio' && <PortfolioHero />}
       {activeTab === 'product'   && <ProductLaunch />}

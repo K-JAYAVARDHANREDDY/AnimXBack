@@ -4,12 +4,71 @@
   "category": "Scroll",
   "engine": "gsap",
   "defaultProps": {
-    "isPreview": false
+    "bgTextFirst": "What's",
+    "bgTextSecond": "Everyone",
+    "bgTextThird": "Talking",
+    "cards": [
+      { "id": 0, "name": "Sarah K.",  "role": "Product Designer",  "quote": "Absolutely game-changing. Animations are silky smooth and the code is clean.", "bg": "#FF6B6B", "textColor": "#fff",     "accentColor": "#FFE66D" },
+      { "id": 1, "name": "James T.",  "role": "Frontend Engineer", "quote": "I shipped 3x faster using AnimX. The GSAP integrations are next level.",       "bg": "#FFE66D", "textColor": "#1a1a1a", "accentColor": "#FF6B6B" },
+      { "id": 2, "name": "Priya M.",  "role": "Creative Director", "quote": "Finally, animations that look exactly like the design — no compromises.",       "bg": "#A855F7", "textColor": "#fff",     "accentColor": "#FFE66D" }
+    ],
+    "textColor": "#1a1a1a",
+    "accentColor": "#FF6B6B"
   },
-  "controls": [],
+  "controls": [
+    {
+      "key": "bgTextFirst",
+      "label": "Background Line 1",
+      "type": "text",
+      "default": "What's"
+    },
+    {
+      "key": "bgTextSecond",
+      "label": "Background Line 2",
+      "type": "text",
+      "default": "Everyone"
+    },
+    {
+      "key": "bgTextThird",
+      "label": "Background Line 3",
+      "type": "text",
+      "default": "Talking"
+    },
+    {
+      "key": "textColor",
+      "label": "Text Color",
+      "type": "color",
+      "default": "#1a1a1a"
+    },
+    {
+      "key": "accentColor",
+      "label": "Accent Color",
+      "type": "color",
+      "default": "#FF6B6B"
+    },
+    {
+      "key": "cards",
+      "label": "Testimonial Cards",
+      "type": "json",
+      "default": [
+        { "id": 0, "name": "Sarah K.",  "role": "Product Designer",  "quote": "Absolutely game-changing. Animations are silky smooth and the code is clean.", "bg": "#FF6B6B", "textColor": "#fff",     "accentColor": "#FFE66D" },
+        { "id": 1, "name": "James T.",  "role": "Frontend Engineer", "quote": "I shipped 3x faster using AnimX. The GSAP integrations are next level.",       "bg": "#FFE66D", "textColor": "#1a1a1a", "accentColor": "#FF6B6B" },
+        { "id": 2, "name": "Priya M.",  "role": "Creative Director", "quote": "Finally, animations that look exactly like the design — no compromises.",       "bg": "#A855F7", "textColor": "#fff",     "accentColor": "#FFE66D" }
+      ]
+    }
+  ],
   "code": "gsap.registerPlugin(ScrollTrigger);\n\n// Set negative margin for smooth entrance\ngsap.set('.testimonial-section', {\n  marginTop: '-100vh',\n});\n\n// Parallax text animation\nconst textTl = gsap.timeline({\n  scrollTrigger: {\n    trigger: '.testimonial-section',\n    start: 'top bottom',\n    end: 'bottom top',\n    scrub: 1,\n  },\n});\n\ntextTl\n  .to('.bg-text-1', { xPercent: 60 })\n  .to('.bg-text-2', { xPercent: -30 }, '<')\n  .to('.bg-text-3', { xPercent: 80 }, '<');\n\n// Stack cards animation\nconst cardsTl = gsap.timeline({\n  scrollTrigger: {\n    trigger: '.testimonial-section',\n    start: 'top top',\n    end: '+=200%',\n    scrub: 1,\n    pin: true,\n  },\n});\n\ncardsTl.from('.card', {\n  yPercent: 100,\n  stagger: 0.15,\n  ease: 'power2.out',\n});",
   "animxSyntax": "AnimX.onScroll('.testimonials')\n  .pin()\n  .stack({ stagger: 0.15 })\n  .parallaxText({ xPercent: [60, -30, 80] })\n  .play();",
   "description": "SPYLT-inspired stacking video cards with parallax background text. Includes 5 demo videos - upload your own and customize text. Hover to play videos.",
-  "tags": ["testimonial", "cards", "stack", "video", "parallax", "scroll", "spylt", "pin"],
+  "tags": [
+    "testimonial",
+    "cards",
+    "stack",
+    "video",
+    "parallax",
+    "scroll",
+    "spylt",
+    "pin"
+  ],
   "difficulty": "hard"
 }

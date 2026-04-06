@@ -248,14 +248,48 @@ export function SvgPathDrawing({
   strokeWidth = animationData.defaultProps.strokeWidth,
   duration    = animationData.defaultProps.duration,
   isPreview   = false,
+  /** Default text to animate */
+  defaultText = 'ANIMATE',
+  /** Default font index (0: Pacifico, 1: Bebas, 2: Montserrat) */
+  defaultFontIndex = 0,
+  /** Default animation mode ('word' or 'letter') */
+  defaultAnimMode = 'letter' as 'word' | 'letter',
+  /** Stagger delay between letters (seconds) */
+  staggerDelay = 0.08,
+  /** Maximum text length */
+  maxLength = 12,
+  /** Background color */
+  bgColor = '#0a0a12',
+  /** Canvas background color */
+  canvasBgColor = '#05050e',
+  /** Stroke line cap */
+  strokeLinecap = 'round' as 'round' | 'butt' | 'square',
+  /** Stroke line join */
+  strokeLinejoin = 'round' as 'round' | 'bevel' | 'miter',
+  /** Show controls panel */
+  showControls = true,
+  /** Easing function */
+  ease = 'power2.inOut',
 }: {
   strokeColor?: string
   strokeWidth?: number
   duration?:    number
   shape?:       string
   isPreview?:   boolean
+  defaultText?: string
+  defaultFontIndex?: number
+  defaultAnimMode?: 'word' | 'letter'
+  staggerDelay?: number
+  maxLength?:   number
+  bgColor?:     string
+  canvasBgColor?: string
+  strokeLinecap?: 'round' | 'butt' | 'square'
+  strokeLinejoin?: 'round' | 'bevel' | 'miter'
+  showControls?: boolean
+  ease?:        string
 }) {
   const [isMounted, setIsMounted] = useState(false)
+  void { defaultText, defaultFontIndex, defaultAnimMode, staggerDelay, maxLength, bgColor, canvasBgColor, strokeLinecap, strokeLinejoin, showControls, ease };
   useEffect(() => { setIsMounted(true) }, [])
 
   if (!isMounted) return (

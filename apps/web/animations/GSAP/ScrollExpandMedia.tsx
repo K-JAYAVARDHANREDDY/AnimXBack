@@ -174,7 +174,7 @@ registerAnimation({
   engine:       animationData.engine as any,
   component:    ScrollExpandMedia,
   defaultProps: animationData.defaultProps,
-  controls:     animationData.controls,
+  controls:     animationData.controls as any,
   code:         animationData.code,
   animxSyntax:  animationData.animxSyntax,
   description:  animationData.description,

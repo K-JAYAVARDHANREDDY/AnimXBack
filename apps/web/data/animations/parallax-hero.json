@@ -17,8 +17,32 @@
   },
   "controls": [
     {
+      "key": "headline",
+      "label": "Headline Text",
+      "type": "text",
+      "default": "BEYOND\nLIMITS"
+    },
+    {
+      "key": "subline",
+      "label": "Subline Text",
+      "type": "text",
+      "default": "Scroll to explore the depth"
+    },
+    {
+      "key": "accentColor",
+      "label": "Accent Color",
+      "type": "color",
+      "default": "#00c3ff"
+    },
+    {
+      "key": "bgColor",
+      "label": "Background Color",
+      "type": "color",
+      "default": "#0a0a0f"
+    },
+    {
       "key": "layerSpeed1",
-      "label": "Background Speed",
+      "label": "Background Layer Speed",
       "type": "range",
       "min": 0.1,
       "max": 0.9,
@@ -27,7 +51,7 @@
     },
     {
       "key": "layerSpeed2",
-      "label": "Midground Speed",
+      "label": "Midground Layer Speed",
       "type": "range",
       "min": 0.1,
       "max": 0.9,
@@ -35,10 +59,13 @@
       "default": 0.6
     },
     {
-      "key": "accentColor",
-      "label": "Accent Color",
-      "type": "color",
-      "default": "#00c3ff"
+      "key": "layerSpeed3",
+      "label": "Foreground Layer Speed",
+      "type": "range",
+      "min": 0.1,
+      "max": 1.2,
+      "step": 0.1,
+      "default": 0.9
     }
   ],
   "code": "// Parallax Hero with GSAP\ngsap.to('.layer-bg', {\n  yPercent: -30,\n  scrollTrigger: {\n    trigger: section,\n    scroller: wrapper,\n    start: 'top top',\n    end: 'bottom top',\n    scrub: true\n  }\n})\ngsap.to('.layer-mid', { yPercent: -60, scrub: true })\ngsap.to('.layer-fg', { yPercent: -90, scrub: true })",

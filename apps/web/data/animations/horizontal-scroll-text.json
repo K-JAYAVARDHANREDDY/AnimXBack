@@ -30,6 +30,12 @@
       "label": "Text Color",
       "type": "color",
       "default": "#000000"
+    },
+    {
+      "key": "text",
+      "label": "Scroll Text",
+      "type": "text",
+      "default": "EXPERIENCES"
     }
   ],
   "code": "gsap.to(textElement, {\n  x: () => -textWidth / 2,\n  ease: 'none',\n  repeat: -1,\n  duration: 20,\n  modifiers: {\n    x: gsap.utils.unitize(x => parseFloat(x) % (textWidth / 2))\n  }\n});",

@@ -16,6 +16,13 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Path mappings to use source types */
+    "paths": {
+      "@animx-jaya/animations": ["../packages/animations/src/index.ts"],
+      "@animx-jaya/animations/*": ["../packages/animations/src/*"]
+    },
+    "baseUrl": ".",
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,

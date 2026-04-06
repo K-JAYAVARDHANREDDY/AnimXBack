@@ -46,10 +46,43 @@ export function ScrollExpandMedia({
   mediaUrl  = animationData.defaultProps.mediaUrl,
   mediaType = animationData.defaultProps.mediaType as 'image' | 'video',
   isPreview = false,
+  /** Initial scale of the media (0.1 - 1) */
+  initialScale = 0.5,
+  /** Final scale of the media */
+  finalScale = 1,
+  /** Initial border radius in pixels */
+  initialBorderRadius = 32,
+  /** Final border radius in pixels */
+  finalBorderRadius = 0,
+  /** Container height */
+  height = 360,
+  /** Scroll multiplier (higher = more scroll needed) */
+  scrollMultiplier = 3,
+  /** Background color */
+  bgColor = '#1a1a2e',
+  /** Border radius of the container */
+  containerBorderRadius = '0.75rem',
+  /** Show scroll hint label */
+  showScrollHint = true,
+  /** Allow user to upload custom media */
+  allowUpload = true,
+  /** Easing function name */
+  ease = 'none',
 }: {
   mediaUrl?:  string
   mediaType?: 'image' | 'video'
   isPreview?: boolean
+  initialScale?: number
+  finalScale?: number
+  initialBorderRadius?: number
+  finalBorderRadius?: number
+  height?: number
+  scrollMultiplier?: number
+  bgColor?: string
+  containerBorderRadius?: string
+  showScrollHint?: boolean
+  allowUpload?: boolean
+  ease?: string
 }) {
   const scrollWrapperRef = useRef<HTMLDivElement>(null)
   const scrollInnerRef   = useRef<HTMLDivElement>(null)
@@ -89,9 +122,9 @@ export function ScrollExpandMedia({
     const ctx = gsap.context(() => {
       gsap.fromTo(
         mediaRef.current,
-        { scale: 0.5, borderRadius: '32px' },
+        { scale: initialScale, borderRadius: `${initialBorderRadius}px` },
         {
-          scale: 1, borderRadius: '0px', ease: 'none',
+          scale: finalScale, borderRadius: `${finalBorderRadius}px`, ease,
           scrollTrigger: {
             trigger: stickyRef.current,
             scroller: scrollWrapperRef.current,
@@ -103,7 +136,7 @@ export function ScrollExpandMedia({
       )
     })
     return () => ctx.revert()
-  }, [isPreview, isMounted, currentMedia])
+  }, [isPreview, isMounted, currentMedia, initialScale, finalScale, initialBorderRadius, finalBorderRadius, ease])
 
   // ── PREVIEW ───────────────────────────────────────────────────────
   if (isPreview) {
@@ -126,26 +159,28 @@ export function ScrollExpandMedia({
     <div className="w-full space-y-3">
 
       {/* Upload Controls */}
-      <div className="flex gap-2 items-center">
-        <input ref={fileInputRef} type="file" accept="image/*,video/*" onChange={handleFileUpload} className="hidden" id="media-upload-expand" />
-        <label htmlFor="media-upload-expand" className="cursor-pointer px-3 py-1.5 text-xs bg-primary-500/20 hover:bg-primary-500/30 text-primary-400 rounded-md transition-colors flex items-center gap-2">
-          <Upload className="w-3 h-3" />
-          Upload Custom Media
-        </label>
-        {!useDemo && (
-          <button onClick={handleRemoveMedia} className="px-3 py-1.5 text-xs bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-md transition-colors flex items-center gap-2">
-            <X className="w-3 h-3" />
-            Use Demo
-          </button>
-        )}
-        <span className="text-xs text-gray-500">{useDemo ? '(Demo Image)' : '(Custom Media)'}</span>
-      </div>
+      {allowUpload && (
+        <div className="flex gap-2 items-center">
+          <input ref={fileInputRef} type="file" accept="image/*,video/*" onChange={handleFileUpload} className="hidden" id="media-upload-expand" />
+          <label htmlFor="media-upload-expand" className="cursor-pointer px-3 py-1.5 text-xs bg-primary-500/20 hover:bg-primary-500/30 text-primary-400 rounded-md transition-colors flex items-center gap-2">
+            <Upload className="w-3 h-3" />
+            Upload Custom Media
+          </label>
+          {!useDemo && (
+            <button onClick={handleRemoveMedia} className="px-3 py-1.5 text-xs bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-md transition-colors flex items-center gap-2">
+              <X className="w-3 h-3" />
+              Use Demo
+            </button>
+          )}
+          <span className="text-xs text-gray-500">{useDemo ? '(Demo Image)' : '(Custom Media)'}</span>
+        </div>
+      )}
 
-      <p className="text-xs text-gray-500">↕ Scroll inside the box to expand the media</p>
+      {showScrollHint && <p className="text-xs text-gray-500">↕ Scroll inside the box to expand the media</p>}
 
-      <div ref={scrollWrapperRef} className="relative w-full rounded-xl overflow-y-scroll" style={{ height: '360px' }}>
-        <div ref={scrollInnerRef} style={{ height: '1080px' }}>
-          <div ref={stickyRef} className="sticky top-0 w-full bg-dark-600" style={{ height: '360px', overflow: 'hidden' }}>
+      <div ref={scrollWrapperRef} className="relative w-full overflow-y-scroll" style={{ height, borderRadius: containerBorderRadius }}>
+        <div ref={scrollInnerRef} style={{ height: height * scrollMultiplier }}>
+          <div ref={stickyRef} className="sticky top-0 w-full" style={{ height, overflow: 'hidden', backgroundColor: bgColor }}>
             <div ref={mediaRef} className="w-full h-full">
               {currentType === 'image' ? (
                 <img src={currentMedia} alt="Media preview" className="w-full h-full object-cover" />
@@ -153,9 +188,11 @@ export function ScrollExpandMedia({
                 <video src={currentMedia} className="w-full h-full object-cover" autoPlay loop muted playsInline />
               )}
             </div>
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-xs bg-black/50 px-3 py-1 rounded-full backdrop-blur-sm pointer-events-none">
-              ↓ Scroll to expand ↓
-            </div>
+            {showScrollHint && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-xs bg-black/50 px-3 py-1 rounded-full backdrop-blur-sm pointer-events-none">
+                ↓ Scroll to expand ↓
+              </div>
+            )}
           </div>
         </div>
       </div>

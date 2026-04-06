@@ -5,12 +5,52 @@
   "engine": "gsap",
   "defaultProps": {
     "mediaUrl": "",
-    "mediaType": "image"
+    "mediaType": "image",
+    "initialScale": 0.5,
+    "borderRadius": 32
   },
-  "controls": [],
+  "controls": [
+    {
+      "key": "mediaType",
+      "label": "Media Type",
+      "type": "select",
+      "options": ["image", "video"],
+      "default": "image"
+    },
+    {
+      "key": "mediaUrl",
+      "label": "Media URL",
+      "type": "text",
+      "default": "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?q=80&w=2000&auto=format&fit=crop"
+    },
+    {
+      "key": "initialScale",
+      "label": "Initial Scale",
+      "type": "range",
+      "min": 0.3,
+      "max": 0.9,
+      "step": 0.05,
+      "default": 0.5
+    },
+    {
+      "key": "borderRadius",
+      "label": "Corner Radius (px)",
+      "type": "range",
+      "min": 0,
+      "max": 48,
+      "step": 4,
+      "default": 32
+    }
+  ],
   "code": "gsap.registerPlugin(ScrollTrigger);\n\ngsap.fromTo(\n  mediaElement,\n  {\n    scale: 0.5,\n    borderRadius: '20px',\n  },\n  {\n    scale: 1,\n    borderRadius: '0px',\n    scrollTrigger: {\n      trigger: container,\n      start: 'top bottom',\n      end: 'bottom top',\n      scrub: 1,\n    }\n  }\n);",
   "animxSyntax": "AnimX.onScroll('.media')\n  .expand({ from: 0.5, to: 1 })\n  .play();",
   "description": "Upload image/video that expands smoothly as you scroll through the page",
-  "tags": ["scroll", "expand", "media", "image", "video"],
+  "tags": [
+    "scroll",
+    "expand",
+    "media",
+    "image",
+    "video"
+  ],
   "difficulty": "medium"
 }

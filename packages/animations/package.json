@@ -1,6 +1,6 @@
 {
   "name": "@animx-jaya/animations",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A collection of ready-to-use animation components for React — GSAP, Framer Motion, CSS, and Tailwind.",
   "author": "Jayavardhan Reddy <https://github.com/K-JAYAVARDHANREDDY>",
   "repository": {
@@ -38,7 +38,7 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "@animx-jaya/core": "^0.1.0"
+    "@animx-jaya/core": "^0.1.1"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

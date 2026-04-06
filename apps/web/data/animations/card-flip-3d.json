@@ -33,6 +33,13 @@
       "label": "Accent Color",
       "type": "color",
       "default": "#9b5cf6"
+    },
+    {
+      "key": "trigger",
+      "label": "Flip Trigger",
+      "type": "select",
+      "options": ["hover", "click"],
+      "default": "hover"
     }
   ],
   "code": "// 3D Card Flip with Framer Motion\n<motion.div style={{ rotateY }} className=\"preserve-3d\">\n  {/* Front */}\n  <motion.div className=\"backface-hidden absolute inset-0\" />\n  {/* Back */}\n  <motion.div\n    className=\"backface-hidden absolute inset-0\"\n    style={{ rotateY: 180 }}\n  />\n</motion.div>",

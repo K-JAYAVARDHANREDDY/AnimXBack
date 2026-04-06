@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import animationData from '../data/neon-glow.json'
 
 // ── Inject keyframes ───────────────────────────────────────────────────
@@ -73,7 +73,7 @@ function NeonText({
       letterSpacing: '0.08em',
       textShadow: glow,
       animation: flicker
-        ? `${slow ? 'ng-flicker-slow' : 'ng-flicker'} ${slow ? '4s' : '2.5s'} infinite`
+        ? `${slow ? 'ng-flicker-slow' : 'ng-flicker'} var(--ng-${slow ? 'slow-' : ''}flicker-dur, ${slow ? '4s' : '2.5s'}) infinite`
         : undefined,
       ...extraStyle,
     }}>
@@ -439,25 +439,61 @@ type DemoTab = 'gaming' | 'coming-soon' | 'alerts' | 'terminal'
 export function NeonGlow({
   glowColor = animationData.defaultProps.glowColor,
   isPreview = false,
+  /** Background color */
+  bgColor = '#05050f',
+  /** Text to show in preview */
+  previewText = 'NEON',
+  /** Preview badge text */
+  previewBadgeText = '◈ LIVE ◈',
+  /** Container border radius */
+  borderRadius = 12,
+  /** Flicker animation duration (seconds) */
+  flickerDuration = 2.5,
+  /** Slow flicker duration (seconds) */
+  slowFlickerDuration = 4,
+  /** Pulse glow duration (seconds) */
+  pulseGlowDuration = 2,
+  /** Show tab bar in full mode */
+  showTabs = true,
+  /** Default tab to show */
+  defaultTab = 'gaming' as DemoTab,
+  /** Secondary alert colors */
+  alertColors = { error: '#ef4444', success: '#22c55e', warning: '#f59e0b' },
+  /** Show footer info */
+  showFooter = true,
+  /** Footer text */
+  footerText = '100% CSS · @keyframes · text-shadow · box-shadow glow',
 }: {
   glowColor?: string
   text?: string
   isPreview?: boolean
+  bgColor?: string
+  previewText?: string
+  previewBadgeText?: string
+  borderRadius?: number
+  flickerDuration?: number
+  slowFlickerDuration?: number
+  pulseGlowDuration?: number
+  showTabs?: boolean
+  defaultTab?: DemoTab
+  alertColors?: { error: string; success: string; warning: string }
+  showFooter?: boolean
+  footerText?: string
 }) {
   useNeonStyles()
-  const [activeTab, setActiveTab] = useState<DemoTab>('gaming')
+  const [activeTab, setActiveTab] = useState<DemoTab>(defaultTab)
 
   // ── PREVIEW ──────────────────────────────────────────────────────────
   if (isPreview) {
     return (
-      <div style={{ width: '100%', height: '100%', backgroundColor: '#05050f', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, padding: 12 }}>
-        <NeonText color={glowColor} size={28} flicker>NEON</NeonText>
+      <div style={{ width: '100%', height: '100%', backgroundColor: bgColor, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, padding: 12, borderRadius, '--ng-flicker-dur': `${flickerDuration}s`, '--ng-slow-flicker-dur': `${slowFlickerDuration}s` } as React.CSSProperties}>
+        <NeonText color={glowColor} size={28} flicker>{previewText}</NeonText>
         <NeonBox color={glowColor} pulse style={{ padding: '4px 12px' }}>
-          <span style={{ color: glowColor, fontSize: 9, fontFamily: 'monospace', letterSpacing: '0.2em' }}>◈ LIVE ◈</span>
+          <span style={{ color: glowColor, fontSize: 9, fontFamily: 'monospace', letterSpacing: '0.2em' }}>{previewBadgeText}</span>
         </NeonBox>
         <div style={{ display: 'flex', gap: 6 }}>
-          {['#ef4444', glowColor, '#22c55e'].map((c, i) => (
-            <span key={i} style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: c, boxShadow: `0 0 8px ${c}`, display: 'inline-block', animation: `ng-pulse-glow 1.5s ease-in-out infinite`, animationDelay: `${i * 0.3}s` }} />
+          {[alertColors.error, glowColor, alertColors.success].map((c, i) => (
+            <span key={i} style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: c, boxShadow: `0 0 8px ${c}`, display: 'inline-block', animation: `ng-pulse-glow ${pulseGlowDuration}s ease-in-out infinite`, animationDelay: `${i * 0.3}s` }} />
           ))}
         </div>
       </div>
@@ -473,37 +509,41 @@ export function NeonGlow({
   ]
 
   return (
-    <div className="w-full rounded-xl overflow-hidden border border-white/10" style={{ backgroundColor: '#05050f' }}>
+    <div className="w-full overflow-hidden border border-white/10" style={{ backgroundColor: bgColor, borderRadius, '--ng-flicker-dur': `${flickerDuration}s`, '--ng-slow-flicker-dur': `${slowFlickerDuration}s` } as React.CSSProperties}>
       {/* Tabs */}
-      <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-        {TABS.map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            style={{
-              flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
-              padding: '10px 4px', background: 'none', cursor: 'pointer',
-              borderBottom: activeTab === tab.key ? `2px solid ${glowColor}` : '2px solid transparent',
-              gap: 2,
-            }}
-          >
-            <span style={{ fontSize: 14 }}>{tab.emoji}</span>
-            <span style={{ fontSize: 10, fontFamily: 'monospace', color: activeTab === tab.key ? glowColor : '#6b7280', letterSpacing: '0.05em' }}>{tab.label}</span>
-            <span style={{ fontSize: 9, color: '#374151', display: 'none' }}>{tab.desc}</span>
-          </button>
-        ))}
-      </div>
+      {showTabs && (
+        <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+          {TABS.map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              style={{
+                flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
+                padding: '10px 4px', background: 'none', cursor: 'pointer',
+                borderBottom: activeTab === tab.key ? `2px solid ${glowColor}` : '2px solid transparent',
+                gap: 2,
+              }}
+            >
+              <span style={{ fontSize: 14 }}>{tab.emoji}</span>
+              <span style={{ fontSize: 10, fontFamily: 'monospace', color: activeTab === tab.key ? glowColor : '#6b7280', letterSpacing: '0.05em' }}>{tab.label}</span>
+              <span style={{ fontSize: 9, color: '#374151', display: 'none' }}>{tab.desc}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       {activeTab === 'gaming'      && <GamingHero color={glowColor} />}
       {activeTab === 'coming-soon' && <ComingSoon color={glowColor} />}
       {activeTab === 'alerts'      && <AlertStates color={glowColor} />}
       {activeTab === 'terminal'    && <DevTerminal color={glowColor} />}
 
-      <div style={{ padding: '8px 16px', borderTop: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
-        <p style={{ color: '#374151', fontSize: 10, fontFamily: 'monospace' }}>
-          100% CSS · @keyframes · text-shadow · box-shadow glow
-        </p>
-      </div>
+      {showFooter && (
+        <div style={{ padding: '8px 16px', borderTop: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
+          <p style={{ color: '#374151', fontSize: 10, fontFamily: 'monospace' }}>
+            {footerText}
+          </p>
+        </div>
+      )}
     </div>
   )
 }

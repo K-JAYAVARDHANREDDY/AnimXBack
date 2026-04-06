@@ -12,9 +12,11 @@ interface FlipCardProps {
   width?: number
   height?: number
   trigger?: 'hover' | 'click'
+  perspective?: number
+  ease?: readonly [number, number, number, number]
 }
 
-function FlipCard({ front, back, direction, duration, width = 200, height = 260, trigger = 'hover' }: FlipCardProps) {
+function FlipCard({ front, back, direction, duration, width = 200, height = 260, trigger = 'hover', perspective = 1000, ease = [0.76, 0, 0.24, 1] }: FlipCardProps) {
   const [flipped, setFlipped] = useState(false)
 
   const rotateKey = direction === 'horizontal' ? 'rotateY' : 'rotateX'
@@ -22,7 +24,7 @@ function FlipCard({ front, back, direction, duration, width = 200, height = 260,
   return (
     <div
       className="relative cursor-pointer select-none"
-      style={{ width, height, perspective: 1000 }}
+      style={{ width, height, perspective }}
       onMouseEnter={() => trigger === 'hover' && setFlipped(true)}
       onMouseLeave={() => trigger === 'hover' && setFlipped(false)}
       onClick={() => trigger === 'click' && setFlipped(f => !f)}
@@ -30,7 +32,7 @@ function FlipCard({ front, back, direction, duration, width = 200, height = 260,
       <motion.div
         className="relative w-full h-full"
         animate={{ [rotateKey]: flipped ? 180 : 0 }}
-        transition={{ duration, ease: [0.76, 0, 0.24, 1] }}
+        transition={{ duration, ease }}
         style={{ transformStyle: 'preserve-3d' }}
       >
         {/* Front face */}
@@ -90,13 +92,58 @@ export function CardFlip3D({
   flipDirection = animationData.defaultProps.flipDirection as FlipDir,
   duration = animationData.defaultProps.duration,
   accentColor = animationData.defaultProps.accentColor,
+  trigger = (animationData.defaultProps as any).trigger || "hover",
   isPreview = false,
+  /** Card width in pixels */
+  cardWidth = 200,
+  /** Card height in pixels */
+  cardHeight = 260,
+  /** Perspective value for 3D effect */
+  perspective = 1000,
+  /** Border radius in pixels */
+  borderRadius = 16,
+  /** Custom front content (React node) */
+  frontContent,
+  /** Custom back content (React node) */
+  backContent,
+  /** Front card background */
+  frontBg = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+  /** Back card background */
+  backBg,
+  /** Front card title */
+  frontTitle = 'Hover me',
+  /** Back card title */
+  backTitle = 'Flipped!',
+  /** Front card emoji/icon */
+  frontEmoji = '🃏',
+  /** Back card text */
+  backText = 'Built with Framer Motion',
+  /** Easing curve */
+  ease = [0.76, 0, 0.24, 1] as const,
+  /** Show demo cards in detail view */
+  showDemoCards = true,
 }: {
   flipDirection?: FlipDir
   duration?: number
   accentColor?: string
+  trigger?: 'hover' | 'click'
   isPreview?: boolean
+  cardWidth?: number
+  cardHeight?: number
+  perspective?: number
+  borderRadius?: number
+  frontContent?: React.ReactNode
+  backContent?: React.ReactNode
+  frontBg?: string
+  backBg?: string
+  frontTitle?: string
+  backTitle?: string
+  frontEmoji?: string
+  backText?: string
+  ease?: readonly [number, number, number, number]
+  showDemoCards?: boolean
 }) {
+  const resolvedBackBg = backBg || `linear-gradient(135deg, ${accentColor}, #6366f1)`
   // ── PREVIEW ─────────────────────────────────────────────────────────
   if (isPreview) {
     return (
@@ -107,17 +154,23 @@ export function CardFlip3D({
           width={90}
           height={120}
           trigger="hover"
+          perspective={perspective}
+          ease={ease}
           front={
-            <div className="w-full h-full flex flex-col items-center justify-center gap-2" style={{ background: 'linear-gradient(135deg, #1a1a2e, #16213e)' }}>
-              <span className="text-2xl">🃏</span>
-              <span className="text-white text-[10px] font-semibold">hover</span>
-            </div>
+            frontContent || (
+              <div className="w-full h-full flex flex-col items-center justify-center gap-2" style={{ background: frontBg }}>
+                <span className="text-2xl">{frontEmoji}</span>
+                <span className="text-white text-[10px] font-semibold">hover</span>
+              </div>
+            )
           }
           back={
-            <div className="w-full h-full flex flex-col items-center justify-center gap-2" style={{ background: `linear-gradient(135deg, ${accentColor}, #6366f1)` }}>
-              <span className="text-2xl">✨</span>
-              <span className="text-white text-[10px] font-semibold">flip!</span>
-            </div>
+            backContent || (
+              <div className="w-full h-full flex flex-col items-center justify-center gap-2" style={{ background: resolvedBackBg }}>
+                <span className="text-2xl">✨</span>
+                <span className="text-white text-[10px] font-semibold">flip!</span>
+              </div>
+            )
           }
         />
       </div>
@@ -133,16 +186,54 @@ export function CardFlip3D({
       </div>
 
       <div className="flex items-center justify-center gap-8 flex-wrap">
-        {CARDS.map((card, i) => (
+        {/* Custom card if frontContent/backContent provided */}
+        {(frontContent || backContent) && (
+          <div className="flex flex-col items-center gap-3">
+            <FlipCard
+              direction={flipDirection}
+              duration={duration}
+              width={cardWidth}
+              height={cardHeight}
+              trigger={trigger}
+              perspective={perspective}
+              ease={ease}
+              front={
+                frontContent || (
+                  <div className="w-full h-full flex flex-col items-center justify-center gap-3 border border-white/10" style={{ background: frontBg, borderRadius }}>
+                    <span className="text-4xl">{frontEmoji}</span>
+                    <span className="text-white text-sm font-semibold">{frontTitle}</span>
+                  </div>
+                )
+              }
+              back={
+                backContent || (
+                  <div className="w-full h-full flex flex-col items-center justify-center gap-2" style={{ background: resolvedBackBg, borderRadius }}>
+                    <span className="text-white text-base font-bold">{backTitle}</span>
+                    <div className="w-8 h-px bg-white/30" />
+                    <span className="text-white/80 text-xs text-center px-4">{backText}</span>
+                  </div>
+                )
+              }
+            />
+            <p className="text-gray-600 text-[10px] capitalize">{trigger}</p>
+          </div>
+        )}
+
+        {/* Demo cards */}
+        {showDemoCards && !frontContent && !backContent && CARDS.map((card, i) => (
           <div key={i} className="flex flex-col items-center gap-3">
             <FlipCard
               direction={flipDirection}
               duration={duration}
-              trigger={card.trigger}
+              width={cardWidth}
+              height={cardHeight}
+              trigger={trigger}
+              perspective={perspective}
+              ease={ease}
               front={
                 <div
                   className="w-full h-full flex flex-col items-center justify-center gap-3 border border-white/10"
-                  style={{ background: card.frontBg }}
+                  style={{ background: card.frontBg, borderRadius }}
                 >
                   <span className="text-4xl">{card.frontEmoji}</span>
                   <span className="text-white text-sm font-semibold">{card.frontTitle}</span>
@@ -154,7 +245,7 @@ export function CardFlip3D({
               back={
                 <div
                   className="w-full h-full flex flex-col items-center justify-center gap-2"
-                  style={{ background: card.backBg }}
+                  style={{ background: card.backBg, borderRadius }}
                 >
                   <span className="text-white text-base font-bold">{card.backTitle}</span>
                   <div className="w-8 h-px bg-white/30" />
