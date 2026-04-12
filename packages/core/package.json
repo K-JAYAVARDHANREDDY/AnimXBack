@@ -1,6 +1,6 @@
 {
   "name": "@animx-jaya/core",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "AnimX — Unified Animation API. Write Once, Animate Anywhere.",
   "author": "Jayavardhan Reddy <https://github.com/K-JAYAVARDHANREDDY>",
   "repository": {
@@ -30,7 +30,9 @@
       "require": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch"

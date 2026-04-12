@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { registerAnimation } from '../../core/AnimationRegistry'
-import animationData from '@/data/animations/infinite-text-marque.json'
+import animationData from '@/data/animations/infinite-text-marquee.json'
 
 export function InfiniteTextMarquee({
   topText = animationData.defaultProps.topText as string,

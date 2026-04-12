@@ -4,6 +4,7 @@ import { useRef } from 'react'
 import { motion, useScroll, useTransform, type Variants } from 'framer-motion'
 import { Sparkles, ArrowRight, Zap, Code2, Layers, MousePointer2, Box, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
+import { EngineShowcase } from './EngineShowcase'
 
 // ── Fade-up animation variant reused throughout ──────────────────────
 const fadeUp: Variants = {
@@ -385,6 +386,16 @@ export function LandingPage({ onEnter }: { onEnter: () => void }) {
               </motion.div>
             ))}
           </motion.div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          ENGINE CAPABILITIES (Core APIs)
+      ══════════════════════════════════════════ */}
+      <section className="relative py-24 px-6 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#060610] to-transparent" />
+        <div className="max-w-7xl mx-auto relative z-10">
+          <EngineShowcase />
         </div>
       </section>
 

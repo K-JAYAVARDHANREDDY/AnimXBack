@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
-import animationData from '../data/infinite-text-marque.json'
+import animationData from '../data/infinite-text-marquee.json'
 
 export function InfiniteTextMarquee({
   topText = animationData.defaultProps.topText as string,

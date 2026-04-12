@@ -21,7 +21,6 @@
       "@animx-jaya/animations": ["../packages/animations/src/index.ts"],
       "@animx-jaya/animations/*": ["../packages/animations/src/*"]
     },
-    "baseUrl": ".",
 
     /* Linting */
     "strict": true,

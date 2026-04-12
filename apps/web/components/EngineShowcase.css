@@ -1,0 +1,138 @@
+.engine-showcase-wrapper {
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+}
+
+.novel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.novel-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.novel-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.demo-header {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.demo-header > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.novel-number {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.props-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border-radius: 100px;
+  background: rgba(157, 78, 221, 0.2);
+  color: #c77dff;
+  border: 1px solid rgba(157, 78, 221, 0.3);
+}
+
+.engine-preview {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.02),
+    rgba(255, 255, 255, 0.02) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.engine-box {
+  width: 120px;
+  height: 120px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.engine-snippet {
+  padding: 16px 24px;
+  background: rgba(10, 10, 16, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.engine-snippet pre {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 13px;
+  color: #a8b2d1;
+}
+
+.engine-copy-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.engine-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.engine-play-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.engine-play-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
