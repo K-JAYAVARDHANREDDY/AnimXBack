@@ -24,7 +24,6 @@ export default function EmbedLayout({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        overflow: 'hidden',
       }}
     >
       {children}

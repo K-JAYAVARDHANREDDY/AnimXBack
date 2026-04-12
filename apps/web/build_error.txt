@@ -1,9 +1,0 @@
-﻿
-> web@0.1.0 build
-> next build
-
-Γû▓ Next.js 16.2.1 (Turbopack)
-
-  Creating an optimized production build ...
-Γ£ô Compiled successfully in 7.8s
-  Running TypeScript ...

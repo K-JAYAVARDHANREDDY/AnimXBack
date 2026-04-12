@@ -15,6 +15,8 @@ export function EngineShowcase() {
       <div className="flex items-center justify-center py-10 opacity-30">
         <div className="w-full h-px bg-gradient-to-r from-transparent via-white to-transparent" />
       </div>
+
+      <IframeEmbedSection />
     </div>
   )
 }
@@ -316,6 +318,119 @@ function PracticalUxSection() {
           </div>
         </div>
 
+      </div>
+    </section>
+  )
+}
+
+/* ─────────────────────────────────────────────────────────
+   Iframe Embed Section
+─────────────────────────────────────────────────────────── */
+const EMBED_ANIMATIONS = [
+  { id: 'infinite-text-marquee',    label: 'Infinite Marquee' },
+  { id: 'text-scramble',            label: 'Text Scramble'    },
+  { id: 'counter-animation',        label: 'Counter'          },
+  { id: 'neon-glow',                label: 'Neon Glow'        },
+  { id: 'card-flip-3d',             label: 'Card Flip 3D'     },
+  { id: 'stagger-pulse',            label: 'Stagger Pulse'    },
+]
+
+function IframeEmbedSection() {
+  const [activeId, setActiveId] = useState(EMBED_ANIMATIONS[0].id)
+  const [copiedEmbed, setCopiedEmbed] = useState(false)
+  const [copiedScript, setCopiedScript] = useState(false)
+
+  const ANIMX_BASE = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'
+  const embedUrl   = `${ANIMX_BASE}/embed/${activeId}`
+  const iframeCode = `<iframe\n  src="${embedUrl}"\n  width="100%"\n  height="400"\n  frameborder="0"\n  allowfullscreen\n  title="AnimX - ${activeId}"\n></iframe>`
+  const scriptCode = `npx animx add ${activeId}`
+
+  const copy = (text: string, which: 'embed' | 'script') => {
+    navigator.clipboard.writeText(text)
+    if (which === 'embed') { setCopiedEmbed(true); setTimeout(() => setCopiedEmbed(false), 2000) }
+    else                   { setCopiedScript(true); setTimeout(() => setCopiedScript(false), 2000) }
+  }
+
+  return (
+    <section className="section-container" style={{ marginTop: '4rem' }}>
+      <div className="section-header text-center sm:text-left mt-8">
+        <div className="section-badge mx-auto sm:mx-0" style={{ background: 'rgba(0, 245, 255, 0.2)', color: '#00f5ff', borderColor: '#00f5ff', display: 'inline-block', padding: '4px 12px', borderRadius: '100px', fontSize: '12px', fontWeight: 700, margin: '0 auto 12px' }}>Zero Config</div>
+        <h2 className="section-title text-3xl sm:text-4xl font-black mb-3">Iframe Embedding</h2>
+        <p className="section-desc max-w-2xl text-gray-400">
+          Drop any AnimX animation into any site with a single <code style={{ fontSize: 16 }}>&lt;iframe&gt;</code> — no build step required. Perfect for Webflow, Framer, or vanilla HTML.
+        </p>
+      </div>
+
+      {/* Animation selector pills */}
+      <div className="embed-pills">
+        {EMBED_ANIMATIONS.map(a => (
+          <button
+            key={a.id}
+            className={`embed-pill ${activeId === a.id ? 'active' : ''}`}
+            onClick={() => setActiveId(a.id)}
+          >
+            {a.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="embed-layout">
+        {/* Live iframe preview */}
+        <div className="embed-preview-wrap">
+          <div className="embed-preview-label">Live Preview</div>
+          <iframe
+            key={activeId}
+            src={embedUrl}
+            width="100%"
+            height="400"
+            style={{ border: 'none', display: 'block', background: '#0a0e1a' }}
+            title={`AnimX – ${activeId}`}
+            allowFullScreen
+          />
+          <p className="embed-note">
+            ⚡ Powered by <strong>AnimX</strong> — serving from <code>/embed/{activeId}</code>
+          </p>
+        </div>
+
+        {/* Code snippets */}
+        <div className="embed-codes">
+          <div className="embed-code-block">
+            <div className="embed-code-header">
+              <span>Embed (iframe)</span>
+              <button className="embed-copy" onClick={() => copy(iframeCode, 'embed')}>
+                {copiedEmbed ? '✓ Copied!' : 'Copy'}
+              </button>
+            </div>
+            <pre style={{ margin: 0, padding: 16, overflowX: 'auto' }}><code style={{ color: '#00f5ff', fontFamily: 'monospace', fontSize: 12, whiteSpace: 'pre-wrap' }}>{iframeCode}</code></pre>
+          </div>
+
+          <div className="embed-code-block">
+            <div className="embed-code-header">
+              <span>AnimX CLI</span>
+              <button className="embed-copy" onClick={() => copy(scriptCode, 'script')}>
+                {copiedScript ? '✓ Copied!' : 'Copy'}
+              </button>
+            </div>
+            <pre style={{ margin: 0, padding: 16, overflowX: 'auto' }}><code style={{ color: '#00f5ff', fontFamily: 'monospace', fontSize: 13, whiteSpace: 'pre-wrap' }}>{scriptCode}</code></pre>
+          </div>
+
+          <div className="embed-info">
+            <div className="embed-info-row">
+              <span className="embed-info-icon">📦</span>
+              <div>
+                <strong>Isolated Environment</strong>
+                <p>Renders a fully isolated animation page — no React, no build step on the consumer side. No CSS conflicts.</p>
+              </div>
+            </div>
+            <div className="embed-info-row">
+              <span className="embed-info-icon">🎯</span>
+              <div>
+                <strong>Production Ready</strong>
+                <p>Fully optimized. Only ships the absolute minimum JS/CSS required for the specific animation.</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   )

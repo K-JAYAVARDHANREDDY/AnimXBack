@@ -136,3 +136,25 @@
 .engine-play-btn:hover {
   background: rgba(255, 255, 255, 0.1);
 }
+
+/* ─── Iframe Embed Section ────────────────────── */
+.embed-pills { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 48px; }
+.embed-pill { padding: 8px 20px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 100px; color: #a8b2d1; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.25s; }
+.embed-pill:hover { background: rgba(157,78,221,0.12); border-color: rgba(157,78,221,0.4); color: #fff; }
+.embed-pill.active { background: linear-gradient(135deg, rgba(157,78,221,0.25), rgba(0,245,255,0.15)); border-color: rgba(0,245,255,0.5); color: #00f5ff; box-shadow: 0 0 16px rgba(0,245,255,0.15); }
+.embed-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+@media (max-width: 900px) { .embed-layout { grid-template-columns: 1fr; } }
+.embed-preview-wrap { background: rgba(10, 10, 16, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; overflow: hidden; }
+.embed-preview-label { padding: 14px 20px; font-size: 13px; font-weight: 700; color: #a8b2d1; border-bottom: 1px solid rgba(255, 255, 255, 0.1); background: rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px; }
+.embed-preview-label::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #00f5ff; box-shadow: 0 0 8px #00f5ff; }
+.embed-note { padding: 12px 20px; font-size: 12px; color: #a8b2d1; border-top: 1px solid rgba(255, 255, 255, 0.1); background: rgba(0,0,0,0.15); }
+.embed-note code { font-family: inherit; color: #00f5ff; font-size: 11px; }
+.embed-codes { display: flex; flex-direction: column; gap: 20px; }
+.embed-code-block { background: rgba(10, 10, 16, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; overflow: hidden; }
+.embed-code-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(0,0,0,0.25); border-bottom: 1px solid rgba(255, 255, 255, 0.1); font-size: 13px; font-weight: 700; color: #a8b2d1; }
+.embed-copy { padding: 4px 12px; background: rgba(0,245,255,0.08); border: 1px solid rgba(0,245,255,0.25); border-radius: 8px; color: #00f5ff; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.embed-info { background: rgba(10, 10, 16, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+.embed-info-row { display: flex; gap: 16px; align-items: flex-start; }
+.embed-info-icon { font-size: 24px; line-height: 1; }
+.embed-info-row strong { display: block; color: white; margin-bottom: 4px; }
+.embed-info-row p { color: #a8b2d1; font-size: 14px; margin: 0; line-height: 1.5; }

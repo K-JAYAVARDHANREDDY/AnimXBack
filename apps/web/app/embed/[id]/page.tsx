@@ -93,10 +93,10 @@ export default function EmbedPage() {
       style={{
         width: '100%',
         minHeight: '100vh',
-        display: 'flex',
+        display: animation.category.toLowerCase() === 'scroll' ? 'block' : 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '2rem',
+        padding: animation.category.toLowerCase() === 'scroll' ? '0' : '2rem',
         boxSizing: 'border-box',
         background: '#0a0e1a',
       }}

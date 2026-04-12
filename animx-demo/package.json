@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@animx-jaya/animations": "file:../packages/animations",
-    "@animx-jaya/core": "^0.1.0",
+    "@animx-jaya/core": "file:../packages/core",
     "framer-motion": "^12.38.0",
     "gsap": "^3.14.2",
     "lucide-react": "^1.7.0",

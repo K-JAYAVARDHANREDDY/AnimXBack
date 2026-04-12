@@ -4,6 +4,24 @@
   overflow: hidden;
 }
 
+.power-showcase-container {
+  background: linear-gradient(to bottom, transparent, #050508 5%, #050508 95%, transparent);
+  margin-top: 4rem;
+  padding-bottom: 4rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* ─── v2.0 Custom Cursor ───────────────────────── */
+.custom-cursor {
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+              height 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+              background-color 0.3s ease,
+              border-radius 0.3s ease,
+              border 0.3s ease,
+              transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 /* ─── Hero ─────────────────────────────────────── */
 .hero-section {
   position: relative;

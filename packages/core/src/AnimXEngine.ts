@@ -563,28 +563,43 @@ export class AnimXSpatialEngine {
   }
 }
 
+// ── NEW: Noise Utility for Organic Motion ─────────────────────────────
+class AnimXNoise {
+  private p = new Uint8Array(512)
+  constructor() {
+    for (let i = 0; i < 256; i++) this.p[i] = this.p[i + 256] = Math.floor(Math.random() * 256)
+  }
+  fade(t: number) { return t * t * t * (t * (t * 6 - 15) + 10) }
+  lerp(t: number, a: number, b: number) { return a + t * (b - a) }
+  grad(hash: number, x: number) { return (hash & 1) === 0 ? x : -x }
+  perlin1D(x: number) {
+    const X = Math.floor(x) & 255
+    x -= Math.floor(x)
+    const u = this.fade(x)
+    return this.lerp(u, this.grad(this.p[X], x), this.grad(this.p[X + 1], x - 1))
+  }
+}
+const noise = new AnimXNoise()
+
 export class AnimXGenerativeSystem {
    constructor(private selector: string | HTMLElement) {}
 
-   /** Moves the element organically in a bounded area */
-   wander(options: { speed?: number, bounds?: number } = {}) {
+   /** Moves the element organically in a bounded area using Perlin Noise */
+   wander(options: { speed?: number, bounds?: number, noiseSeed?: number } = {}) {
        const el = AnimXEngine.getInstance()._getElObj(this.selector)
        if (!el) return this
 
-       const { speed = 1, bounds = 50 } = options
-       let tx = Math.random() * 1000
-       let ty = Math.random() * 1000
+       const { speed = 1, bounds = 50, noiseSeed = Math.random() * 1000 } = options
+       let time = noiseSeed
        
        const tick = () => {
            if (AnimXEngine.globalTimeScale !== 0) {
-               const x = Math.sin(tx) * Math.cos(tx * 0.5) * bounds
-               const y = Math.cos(ty) * Math.sin(ty * 0.5) * bounds
+               // Use noise for much smoother, organic "living" motion than pure Sin/Cos
+               const nx = noise.perlin1D(time) * bounds * 2
+               const ny = noise.perlin1D(time + 100) * bounds * 2
                
-               gsap.set(el, { x, y })
-               
-               // Move through time
-               tx += 0.02 * speed * AnimXEngine.globalTimeScale
-               ty += 0.02 * speed * AnimXEngine.globalTimeScale
+               gsap.set(el, { x: nx, y: ny })
+               time += 0.005 * speed * AnimXEngine.globalTimeScale
            }
            requestAnimationFrame(tick)
        }
@@ -638,6 +653,85 @@ export class AnimXScrollEngine {
         }
      )
      return this
+  }
+
+  /** NEW: Native Smooth Page Scrolling (lerp-based) */
+  smooth(options: { intensity?: number, damping?: number } = {}) {
+    const { intensity = 1, damping = 0.1 } = options
+    let target = window.scrollY
+    let current = window.scrollY
+    let running = true
+
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault()
+      target += e.deltaY * intensity
+      target = Math.max(0, Math.min(target, document.documentElement.scrollHeight - window.innerHeight))
+    }
+
+    const tick = () => {
+      if (!running) return
+      current += (target - current) * damping
+      window.scrollTo(0, current)
+      requestAnimationFrame(tick)
+    }
+
+    window.addEventListener('wheel', onWheel, { passive: false })
+    requestAnimationFrame(tick)
+
+    return {
+      stop: () => {
+        running = false
+        window.removeEventListener('wheel', onWheel)
+      }
+    }
+  }
+}
+
+export class AnimXCursorEngine {
+  private cursor: HTMLElement
+  constructor(private selector: string|HTMLElement) {
+    this.cursor = AnimXEngine.getInstance()._getElObj(this.selector) as HTMLElement
+  }
+
+  /** Cursor follows mouse with a smooth lag/trail */
+  follow(options: { damping?: number, scale?: number } = {}) {
+    const { damping = 0.15, scale = 1 } = options
+    let mx = 0, my = 0
+    let cx = 0, cy = 0
+    let running = true
+
+    const onMove = (e: MouseEvent) => {
+      mx = e.clientX
+      my = e.clientY
+    }
+
+    const tick = () => {
+      if (!running) return
+      cx += (mx - cx) * damping
+      cy += (my - cy) * damping
+      gsap.set(this.cursor, { x: cx, y: cy, scale, xPercent: -50, yPercent: -50, position: 'fixed', top: 0, left: 0, pointerEvents: 'none', zIndex: 9999 })
+      requestAnimationFrame(tick)
+    }
+
+    window.addEventListener('mousemove', onMove)
+    requestAnimationFrame(tick)
+
+    const api = {
+      stop: () => {
+        running = false
+        window.removeEventListener('mousemove', onMove)
+      },
+      /** Custom morph effect when hovering over specific elements */
+      morphOnHover: (targetSelector: string, vars: gsap.TweenVars) => {
+        const targets = document.querySelectorAll(targetSelector)
+        targets.forEach(t => {
+          t.addEventListener('mouseenter', () => gsap.to(this.cursor, { ...vars, duration: 0.3 }))
+          t.addEventListener('mouseleave', () => gsap.to(this.cursor, { scale, backgroundColor: '', width: '', height: '', borderRadius: '', border: '', duration: 0.3 }))
+        })
+        return api
+      }
+    }
+    return api
   }
 }
 
@@ -791,13 +885,6 @@ export class AnimXEngine {
     return AnimXEngine.instance
   }
 
-  _getElObj(selector: string | HTMLElement): HTMLElement | null {
-    if (typeof selector === 'string') {
-      return document.querySelector(selector) as HTMLElement
-    }
-    return selector as HTMLElement
-  }
-
   // ── GOD MODE API ─────────────────────────────────────────────────────────
 
   /** Global time dilation controller (Bullet time, Reverse, Fast Forward) */
@@ -840,6 +927,11 @@ export class AnimXEngine {
   /** Advanced string typography manipulation */
   text(selector: string | HTMLElement) {
     return new AnimXTypographyEngine(selector)
+  }
+
+  /** NEW v2.0: Interactive Cursor Engine */
+  cursor(selector: string | HTMLElement) {
+    return new AnimXCursorEngine(selector)
   }
 
   // ── Backward-compatible primitives ──────────────────────────────────────
@@ -1277,7 +1369,14 @@ export class AnimXEngine {
     return new ChoreographRunner(elements)
   }
 
-  // ── Private helpers ───────────────────────────────────────────────────────
+
+  /** Helper to get element object from selector or ref */
+  _getElObj(selector: string | HTMLElement): HTMLElement | null {
+    if (typeof selector === 'string') {
+      return document.querySelector(selector) as HTMLElement
+    }
+    return selector as HTMLElement
+  }
 
   private getElement(selector: string | HTMLElement): Element | HTMLElement {
     if (typeof selector === 'string') {

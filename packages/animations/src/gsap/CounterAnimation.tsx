@@ -224,7 +224,7 @@ export function CounterAnimation({
         </div>
 
         {/* 2×2 grid */}
-        <div className="grid max-w-sm mx-auto" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`, gap }}>
+        <div className="grid w-full mx-auto" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`, gap }}>
           {counters.slice(0, 4).map((c, i) => (
             <StatCard
               key={i}
